@@ -1,0 +1,9 @@
+{
+  "createPostDialogTitle": "新しい投稿を作成",
+  "createPostDialogDescription": "サークルに何かを共有しましょう。",
+  "textareaPlaceholder": "今何が起きてる？",
+  "createPostButton": "投稿する",
+  "improveWithAIButton": "AIで改善する",
+  "imageTooltip": "画像を添付",
+  "emojiTooltip": "絵文字を添付"
+}

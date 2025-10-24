@@ -1,0 +1,9 @@
+{
+  "createPostDialogTitle": "Créer une nouvelle publication",
+  "createPostDialogDescription": "Partagez quelque chose avec vos cercles.",
+  "textareaPlaceholder": "Que se passe-t-il ?",
+  "createPostButton": "Créer une publication",
+  "improveWithAIButton": "Améliorer avec l'IA",
+  "imageTooltip": "Joindre une image",
+  "emojiTooltip": "Joindre un emoji"
+}

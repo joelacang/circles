@@ -1,0 +1,9 @@
+{
+  "createPostDialogTitle": "Создать новую публикацию",
+  "createPostDialogDescription": "Поделитесь чем-нибудь с вашими кругами.",
+  "textareaPlaceholder": "Что происходит?",
+  "createPostButton": "Создать пост",
+  "improveWithAIButton": "Улучшить с помощью ИИ",
+  "imageTooltip": "Прикрепить изображение",
+  "emojiTooltip": "Прикрепить эмодзи"
+}

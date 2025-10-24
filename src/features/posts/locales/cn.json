@@ -1,0 +1,9 @@
+{
+  "createPostDialogTitle": "创建新帖子",
+  "createPostDialogDescription": "与您的圈子分享一些内容。",
+  "textareaPlaceholder": "发生了什么？",
+  "createPostButton": "发布帖子",
+  "improveWithAIButton": "使用 AI 优化",
+  "imageTooltip": "添加图片",
+  "emojiTooltip": "添加表情"
+}

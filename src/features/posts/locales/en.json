@@ -1,0 +1,9 @@
+{
+  "createPostDialogTitle": "Create New Post",
+  "createPostDialogDescription": "Share something with your circles.",
+  "textareaPlaceholder": "What's happening?",
+  "createPostButton": "Create Post",
+  "improveWithAIButton": "Improve with AI",
+  "imageTooltip": "Attach Image",
+  "emojiTooltip": "Attach Emoji"
+}

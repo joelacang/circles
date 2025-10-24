@@ -1,0 +1,275 @@
+{
+  "connectInstantly": "Connectez-vous instantanément",
+  "shareMoments": "Partagez des moments",
+  "chatRealTime": "Chattez en temps réel",
+  "site_name": "Circles",
+  "last_updated": "2025-10-18",
+  "policies": {
+    "privacy_policy": {
+      "title": "Politique de confidentialité",
+      "sections": [
+        {
+          "heading": "1. Informations que nous collectons",
+          "content": [
+            {
+              "title": "Informations que vous fournissez",
+              "items": [
+                "Informations de compte : nom, nom d'utilisateur, adresse e-mail, numéro de téléphone, mot de passe.",
+                "Informations de profil : photo de profil, biographie, liens, localisation et préférences.",
+                "Contenu : publications, photos, vidéos, messages et autres médias que vous partagez.",
+                "Communication : lorsque vous contactez le support ou interagissez directement avec nous."
+              ]
+            },
+            {
+              "title": "Informations collectées automatiquement",
+              "items": [
+                "Données de l'appareil : adresse IP, type de navigateur, système d'exploitation, identifiants de l'appareil.",
+                "Données d'utilisation : pages consultées, temps passé sur les pages, interactions et historique de connexion.",
+                "Cookies et technologies similaires : pour personnaliser votre expérience et mesurer les performances."
+              ]
+            },
+            {
+              "title": "Informations provenant de tiers",
+              "items": [
+                "Autres utilisateurs (par exemple, mentions, tags, messages).",
+                "Intégrations tierces (par exemple, lorsque vous connectez Circles avec une autre application)."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "2. Comment nous utilisons vos informations",
+          "content": {
+            "items": [
+              "Exploiter, maintenir et améliorer Circles.",
+              "Personnaliser votre fil d'actualité et vos recommandations.",
+              "Communiquer avec vous concernant les mises à jour, les alertes de sécurité et le support client.",
+              "Prévenir la fraude, les abus ou les violations de nos Conditions d'utilisation.",
+              "Respecter les obligations légales."
+            ]
+          }
+        },
+        {
+          "heading": "3. Partage des informations",
+          "content": {
+            "items": [
+              "Nous ne vendons pas vos données.",
+              "Nous pouvons partager des informations limitées uniquement avec votre consentement, avec des fournisseurs de services, avec d'autres utilisateurs (selon vos paramètres) ou lorsque la loi l'exige."
+            ]
+          }
+        },
+        {
+          "heading": "4. Cookies et technologies de suivi",
+          "content": {
+            "items": [
+              "Nous utilisons des cookies et des technologies similaires pour vous garder connecté, mémoriser vos préférences et analyser les performances et l'utilisation.",
+              "Vous pouvez gérer ou désactiver les cookies dans les paramètres de votre navigateur."
+            ]
+          }
+        },
+        {
+          "heading": "5. Conservation des données",
+          "content": {
+            "items": [
+              "Nous conservons les données personnelles tant que votre compte est actif ou selon les besoins pour fournir le Service.",
+              "Vous pouvez supprimer votre compte à tout moment ; vos données et publications seront définitivement supprimées après une période raisonnable."
+            ]
+          }
+        },
+        {
+          "heading": "6. Vos droits et choix",
+          "content": {
+            "items": [
+              "Accéder, corriger ou supprimer vos données personnelles.",
+              "Retirer votre consentement au traitement des données.",
+              "Demander une copie de vos données (portabilité des données).",
+              "Pour exercer ces droits, contactez privacy@circles.com."
+            ]
+          }
+        },
+        {
+          "heading": "7. Sécurité",
+          "content": {
+            "items": [
+              "Nous utilisons le cryptage, les pare-feu et le contrôle d'accès pour protéger vos données.",
+              "Cependant, aucun système n'est sécurisé à 100% ; utilisez Circles de manière responsable et signalez les problèmes à security@circles.com."
+            ]
+          }
+        },
+        {
+          "heading": "8. Confidentialité des enfants",
+          "content": {
+            "items": [
+              "Circles n'est pas destiné aux utilisateurs de moins de 13 ans (ou l'âge minimum légal dans votre juridiction).",
+              "Nous ne collectons pas sciemment d'informations auprès de mineurs."
+            ]
+          }
+        },
+        {
+          "heading": "9. Transferts internationaux de données",
+          "content": {
+            "items": [
+              "Si vous accédez à Circles depuis l'extérieur de l'emplacement de notre serveur principal, vos données peuvent être transférées et traitées dans un autre pays où les lois sur la protection des données peuvent différer."
+            ]
+          }
+        },
+        {
+          "heading": "10. Modifications de cette politique",
+          "content": {
+            "items": [
+              "Nous pouvons mettre à jour cette Politique de confidentialité occasionnellement.",
+              "Les modifications importantes seront annoncées par e-mail ou notifications dans l'application.",
+              "L'utilisation continue de Circles signifie que vous acceptez la politique mise à jour."
+            ]
+          }
+        },
+        {
+          "heading": "11. Nous contacter",
+          "content": {
+            "contactInfo": {
+              "email": "privacy@circles.com",
+              "address": "Circles HQ, 123 Digital Avenue, San Francisco, CA 94105, États-Unis"
+            }
+          }
+        }
+      ]
+    },
+    "terms_of_service": {
+      "title": "Conditions d'utilisation",
+      "sections": [
+        {
+          "heading": "1. Acceptation des conditions",
+          "content": {
+            "items": [
+              "En accédant ou en utilisant Circles, vous acceptez d'être lié par ces Conditions et notre Politique de confidentialité.",
+              "Si vous n'êtes pas d'accord, veuillez ne pas utiliser la plateforme."
+            ]
+          }
+        },
+        {
+          "heading": "2. Éligibilité",
+          "content": {
+            "items": [
+              "Vous devez avoir au moins 13 ans (ou l'âge minimum légal dans votre juridiction) pour utiliser Circles.",
+              "En utilisant le Service, vous confirmez que vous remplissez cette condition."
+            ]
+          }
+        },
+        {
+          "heading": "3. Votre compte",
+          "content": {
+            "items": [
+              "Vous êtes responsable du maintien de la confidentialité de vos identifiants de connexion.",
+              "Vous êtes responsable de toutes les activités qui se produisent sous votre compte.",
+              "Informez-nous immédiatement à support@circles.com si vous suspectez une utilisation non autorisée.",
+              "Nous pouvons suspendre ou résilier votre compte si vous violez ces Conditions."
+            ]
+          }
+        },
+        {
+          "heading": "4. Contenu utilisateur",
+          "content": [
+            {
+              "title": "Propriété",
+              "items": [
+                "Vous conservez la propriété de tout contenu que vous publiez sur Circles. En publiant, vous accordez à Circles une licence non exclusive, mondiale et libre de redevances pour héberger, afficher, distribuer et reproduire ce contenu selon les besoins pour exploiter et améliorer le Service."
+              ]
+            },
+            {
+              "title": "Contenu interdit",
+              "items": [
+                "Discours haineux, harcèlement ou menaces.",
+                "Nudité, contenu sexuel ou violence graphique.",
+                "Spam, arnaques ou informations trompeuses.",
+                "Contenu qui enfreint les droits de propriété intellectuelle.",
+                "Tout ce qui est illégal ou qui viole les droits d'une autre personne."
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "5. Règles de la communauté",
+          "content": {
+            "items": [
+              "Traitez les autres avec respect.",
+              "Ne vous faites pas passer pour d'autres personnes et ne déformez pas votre affiliation.",
+              "N'essayez pas de pirater, perturber ou exploiter la plateforme.",
+              "Les violations peuvent entraîner une suspension ou une interdiction permanente."
+            ]
+          }
+        },
+        {
+          "heading": "6. Propriété intellectuelle",
+          "content": {
+            "items": [
+              "Toutes les marques commerciales, logos et logiciels de Circles sont la propriété de Circles Inc.",
+              "Vous ne pouvez pas copier, modifier ou distribuer une partie de Circles sans autorisation écrite."
+            ]
+          }
+        },
+        {
+          "heading": "7. Résiliation",
+          "content": {
+            "items": [
+              "Nous pouvons suspendre ou résilier votre accès si vous enfreignez ces Conditions ou abusez de la plateforme.",
+              "Vous pouvez supprimer votre compte à tout moment via vos paramètres.",
+              "La résiliation ne vous exonère pas de vos obligations pour les actions antérieures."
+            ]
+          }
+        },
+        {
+          "heading": "8. Exclusions de garantie",
+          "content": {
+            "items": [
+              "Circles est fourni « tel quel » sans garanties d'aucune sorte.",
+              "Nous ne garantissons pas un fonctionnement ininterrompu ou sans erreur."
+            ]
+          }
+        },
+        {
+          "heading": "9. Limitation de responsabilité",
+          "content": {
+            "items": [
+              "Dans toute la mesure permise par la loi, Circles et ses affiliés ne sont pas responsables des dommages indirects, accessoires ou consécutifs, ni de la perte de données, de profits ou de réputation résultant de votre utilisation du Service."
+            ]
+          }
+        },
+        {
+          "heading": "10. Indemnisation",
+          "content": {
+            "items": [
+              "Vous acceptez d'indemniser et de dégager Circles de toute responsabilité pour toute réclamation, dommage ou dépense découlant de votre utilisation du Service ou de la violation de ces Conditions."
+            ]
+          }
+        },
+        {
+          "heading": "11. Modifications",
+          "content": {
+            "items": [
+              "Nous pouvons modifier ces Conditions à tout moment.",
+              "Les modifications seront communiquées par e-mail ou notification dans l'application.",
+              "L'utilisation continue de Circles signifie que vous acceptez les Conditions mises à jour."
+            ]
+          }
+        },
+        {
+          "heading": "12. Loi applicable",
+          "content": {
+            "items": [
+              "Ces Conditions sont régies par les lois de la Californie, États-Unis, sauf si la loi locale l'exige autrement."
+            ]
+          }
+        },
+        {
+          "heading": "13. Nous contacter",
+          "content": {
+            "contactInfo": {
+              "email": "support@circles.com",
+              "address": "Circles HQ, 123 Digital Avenue, San Francisco, CA 94105, États-Unis"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
