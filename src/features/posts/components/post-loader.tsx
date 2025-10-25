@@ -1,7 +1,6 @@
 import { useQuery } from "convex/react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
-import { Loader2Icon } from "lucide-react";
 import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
 import {
   Select,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import CommentCard from "@/features/comments/components/comment-card";
 import PostCard from "./post-card";
+import PostCardSkeleton from "./post-card-skeleton";
 
 interface Props {
   postId: Id<"posts">;
@@ -24,8 +24,7 @@ const PostLoader = ({ postId }: Props) => {
   if (post === undefined || loading) {
     return (
       <div className="w-full flex flex-col items-center justify-center text-primary py-8">
-        <Loader2Icon className="animate-spin" />
-        <p className="text-sm">Loading Post...</p>
+        <PostCardSkeleton />
       </div>
     );
   }

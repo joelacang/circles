@@ -26,7 +26,11 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
         "w-full border rounded-xl ",
         !detailsPage && "hover:bg-muted hover:cursor-pointer"
       )}
-      onClick={() => router.push(`/posts/${post.id}`)}
+      onClick={() => {
+        if (!detailsPage) {
+          router.push(`/posts/${post.id}`);
+        }
+      }}
     >
       {/* Header */}
       <div className="flex pr-4 items-center justify-between w-full">
@@ -84,7 +88,7 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
             isBookmarked={post.isBookmarked}
           />
         </div>
-        {showCommentBox && <CommentBox />}
+        {showCommentBox && <CommentBox postId={post.id} />}
       </div>
     </div>
   );
