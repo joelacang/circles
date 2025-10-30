@@ -11,6 +11,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { usePostFormDialog } from "@/features/posts/hooks/use-post-form-dialog";
 import { useRouter } from "next/navigation";
+import CreatePostButton from "@/features/posts/components/create-post-button";
 
 const SidebarContent = () => {
   const { t } = useTranslation();
@@ -56,10 +57,7 @@ const SidebarContent = () => {
         </div>
       ))}
       <div className="px-8 py-4">
-        <Button className="w-full" onClick={onOpen}>
-          <PlusIcon />
-          <span>{t("sidebar:createPost")}</span>
-        </Button>
+        <CreatePostButton className="w-full" />
       </div>
     </div>
   );

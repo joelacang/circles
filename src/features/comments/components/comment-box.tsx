@@ -5,7 +5,7 @@ import {
   InputGroupAddon,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { PlusIcon, SendIcon } from "lucide-react";
+import { PlusIcon, SendIcon, XIcon } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useForm } from "react-hook-form";
 import { CreateComment, createCommentSchema } from "../schemas";
@@ -24,9 +24,10 @@ import toast from "react-hot-toast";
 
 interface Props {
   postId: Id<"posts">;
-  parentCommentId?: Id<"comments">;
+  parentCommentId: Id<"comments"> | null;
+  onClose: () => void;
 }
-const CommentBox = ({ postId, parentCommentId }: Props) => {
+const CommentBox = ({ postId, parentCommentId, onClose }: Props) => {
   const { mutate: createComment, isLoading } = useConvexMutationHandler(
     useMutation(api.comments.create)
   );
@@ -44,7 +45,7 @@ const CommentBox = ({ postId, parentCommentId }: Props) => {
       {
         ...values,
         postId: values.postId as Id<"posts">,
-        parentCommentId: values.parentCommentId as Id<"comments">,
+        parentCommentId: (values.parentCommentId as Id<"comments">) ?? null,
       },
       {
         onLoading: () => {
@@ -53,6 +54,7 @@ const CommentBox = ({ postId, parentCommentId }: Props) => {
         onSuccess: () => {
           toast.success("Comment successfully submitted.");
           form.reset();
+          onClose();
         },
         onError: (error) => {
           toast.error(`Error submitting comment: ${error}`);
@@ -72,16 +74,16 @@ const CommentBox = ({ postId, parentCommentId }: Props) => {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <InputGroup>
+              <InputGroup className="bg-background rounded-xl flex items-start">
                 <FormControl>
                   <InputGroupTextarea
                     placeholder="Write your comment..."
-                    className="min-h-8 max-h-24"
+                    className="min-h-18"
                     {...field}
                     disabled={isLoading}
                   />
                 </FormControl>
-                <InputGroupAddon align="inline-start">
+                {/* <InputGroupAddon align="inline-start">
                   <Hint tooltip="Attach Image">
                     <Button
                       type="button"
@@ -93,17 +95,33 @@ const CommentBox = ({ postId, parentCommentId }: Props) => {
                       <PlusIcon />
                     </Button>
                   </Hint>
-                </InputGroupAddon>
-                <InputGroupAddon align="inline-end">
+                </InputGroupAddon> */}
+                <InputGroupAddon
+                  className="w-full flex justify-end"
+                  align="block-end"
+                >
+                  <Hint tooltip="Cancel Comment">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="rounded-lg cursor-pointer border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      onClick={onClose}
+                    >
+                      <XIcon />
+                      Cancel
+                    </Button>
+                  </Hint>
                   <Hint tooltip="Submit Comment">
                     <Button
                       type="submit"
                       size="sm"
-                      variant="ghost"
-                      className="rounded-full"
+                      variant="default"
+                      className="rounded-lg"
                       disabled={!form.formState.isValid || isLoading}
                     >
                       <SendIcon />
+                      Comment
                     </Button>
                   </Hint>
                 </InputGroupAddon>

@@ -5,12 +5,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useProfileDialog } from "../hooks/use-profile-dialog";
+import { useProfileDialog } from "../../users/hooks/use-profile-dialog";
 import UserProfileForm from "./user-profile-form";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@clerk/nextjs";
 
 const UserProfileFormDialog = () => {
-  const { isOpen, isPending, onClose, onOpen } = useProfileDialog();
+  const { isOpen, isPending, onClose, onOpen, profile } = useProfileDialog();
+  const { user } = useUser();
   const { t } = useTranslation();
   return (
     <Dialog
@@ -31,7 +33,7 @@ const UserProfileFormDialog = () => {
           <DialogDescription>{t("users:profileDialogDesc")}</DialogDescription>
         </DialogHeader>
 
-        <UserProfileForm />
+        {user && <UserProfileForm profile={profile} clerkId={user?.id} />}
       </DialogContent>
     </Dialog>
   );

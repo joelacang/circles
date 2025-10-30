@@ -11,6 +11,9 @@ import BookmarkPostButton from "./bookmark-post-button";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
+import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
+
 interface Props {
   post: Post;
   detailsPage?: boolean;
@@ -18,6 +21,9 @@ interface Props {
 
 const PostCard = ({ post, detailsPage = false }: Props) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
+  const { user: author, loading: loadingAuthor } = useGetUserDetails(
+    post.authorId
+  );
   const router = useRouter();
 
   return (
@@ -26,30 +32,33 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
         "w-full border rounded-xl ",
         !detailsPage && "hover:bg-muted hover:cursor-pointer"
       )}
-      onClick={() => {
-        if (!detailsPage) {
-          router.push(`/posts/${post.id}`);
-        }
-      }}
     >
-      {/* Header */}
-      <div className="flex pr-4 items-center justify-between w-full">
-        {post.author && (
-          <UserItem
-            user={post.author}
-            subtitle={`${formatDistanceToNowStrict(new Date(post.dateCreated))} ago`}
-          />
-        )}
-        <PostDropdownMenu />
-      </div>
+      <div
+        onClick={() => {
+          if (!detailsPage) {
+            router.push(`/posts/${post.id}`);
+          }
+        }}
+      >
+        <div className="flex pr-4 items-center justify-between w-full">
+          {loadingAuthor && <UserItemSkeleton />}
+          {author && !loadingAuthor && (
+            <UserItem
+              user={author}
+              subtitle={`${formatDistanceToNowStrict(new Date(post.dateCreated))} ago`}
+              redirectable
+            />
+          )}
+          <PostDropdownMenu />
+        </div>
 
-      {/* Body */}
-      <div className="p-4">
-        <p className="text-sm">{post.body}</p>
-      </div>
+        {/* Body */}
+        <div className="p-4">
+          <p className="text-sm">{post.body}</p>
+        </div>
 
-      {/* Attachments */}
-      {/* <div className="flex flex-row gap-4 w-full overflow-x-auto p-2">
+        {/* Attachments */}
+        {/* <div className="flex flex-row gap-4 w-full overflow-x-auto p-2">
         <div className="h-64 aspect-[] relative">
           <Image
             src="/images/pic1.jpg"
@@ -60,36 +69,44 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
         </div>
       </div> */}
 
-      {/* Footer */}
-      <div>
-        <div className="flex flex-row items-center justify-between py-2 px-4">
-          <div className="flex items-center  justify-start gap-4">
-            <LikePostButton
-              count={post.likes}
+        {/* Footer */}
+        <div>
+          <div className="flex flex-row items-center justify-between py-2 px-4">
+            <div className="flex items-center  justify-start gap-4">
+              <LikePostButton
+                count={post.likes}
+                postId={post.id}
+                isLiked={post.isLiked}
+              />
+              <PostActionButton
+                tooltip="Quote Post"
+                icon={RepeatIcon}
+                count={post.quotes}
+                action={() => {}}
+              />
+              <PostActionButton
+                tooltip="Comment Post"
+                icon={MessageCircleIcon}
+                count={post.comments}
+                action={() => setShowCommentBox((prev) => !prev)}
+              />
+            </div>
+            <BookmarkPostButton
+              count={post.bookmarks}
               postId={post.id}
-              isLiked={post.isLiked}
-            />
-            <PostActionButton
-              tooltip="Quote Post"
-              icon={RepeatIcon}
-              count={post.quotes}
-              action={() => {}}
-            />
-            <PostActionButton
-              tooltip="Comment Post"
-              icon={MessageCircleIcon}
-              count={post.comments}
-              action={() => setShowCommentBox((prev) => !prev)}
+              isBookmarked={post.isBookmarked}
             />
           </div>
-          <BookmarkPostButton
-            count={post.bookmarks}
-            postId={post.id}
-            isBookmarked={post.isBookmarked}
-          />
         </div>
-        {showCommentBox && <CommentBox postId={post.id} />}
       </div>
+
+      {showCommentBox && (
+        <CommentBox
+          parentCommentId={null}
+          postId={post.id}
+          onClose={() => setShowCommentBox(false)}
+        />
+      )}
     </div>
   );
 };

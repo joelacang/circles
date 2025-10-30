@@ -1,6 +1,9 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
+import { Order } from "@/types/enum";
+import { Comment } from "@/features/comments/types";
+import { getCommentStatus } from "./helpers/comments";
 
 export const create = mutation({
   args: {
@@ -15,21 +18,10 @@ export const create = mutation({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
 
-    let validParentId = args.parentCommentId;
-    let parentComment = null;
-
-    if (args.parentCommentId) {
-      parentComment = await ctx.db.get(args.parentCommentId);
-      if (!parentComment) {
-        // Silently convert to top-level comment
-        validParentId = null;
-      }
-    }
-
     //Create the comment
     const commentId = await ctx.db.insert("comments", {
       body: args.body,
-      parentCommentId: validParentId,
+      parentCommentId: args.parentCommentId,
       postId: args.postId,
       authorId: userIdentity.subject,
       likes: 0,
@@ -37,8 +29,12 @@ export const create = mutation({
     });
 
     //Update Parent Comment Counter
-    if (parentComment) {
-      await ctx.db.patch(args.parentCommentId!, {
+    if (args.parentCommentId) {
+      const parentComment = await ctx.db.get(args.parentCommentId);
+
+      if (!parentComment) return;
+
+      await ctx.db.patch(args.parentCommentId, {
         comments: (parentComment.comments ?? 0) + 1,
       });
     }
@@ -55,18 +51,14 @@ export const create = mutation({
 export const getTopLevelComments = query({
   args: {
     postId: v.id("posts"),
-    order: v.union(
-      v.literal("recent"),
-      v.literal("popular"),
-      v.literal("commented")
-    ),
+    order: Order,
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
     // Build query based on sort order
     const buildQuery = () => {
       switch (args.order) {
-        case "popular":
+        case "Most Likes":
           return ctx.db
             .query("comments")
             .withIndex("by_postId_parentCommentId_likes", (q) =>
@@ -74,7 +66,7 @@ export const getTopLevelComments = query({
             )
             .order("desc");
 
-        case "commented":
+        case "Most Commented":
           return ctx.db
             .query("comments")
             .withIndex("by_postId_parentCommentId_comments", (q) =>
@@ -92,6 +84,59 @@ export const getTopLevelComments = query({
       }
     };
 
-    const commentsData = await buildQuery().paginate(args.paginationOpts);
+    const results = await buildQuery().paginate(args.paginationOpts);
+
+    const page: Comment[] = await Promise.all(
+      results.page.map(async (comment) => {
+        const { isLiked } = await getCommentStatus(ctx, comment._id);
+
+        return {
+          ...comment,
+          id: comment._id,
+          dateCreated: comment._creationTime,
+          isLiked: isLiked,
+        };
+      })
+    );
+
+    return {
+      ...results,
+      page,
+    };
+  },
+});
+
+export const getReplies = query({
+  args: {
+    parentCommentId: v.id("comments"),
+    postId: v.id("posts"),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const results = await ctx.db
+      .query("comments")
+      .withIndex("by_postId_parentCommentId", (q) =>
+        q.eq("postId", args.postId).eq("parentCommentId", args.parentCommentId)
+      )
+      .order("desc")
+      .paginate(args.paginationOpts);
+
+    const page: Comment[] = await Promise.all(
+      results.page.map(async (comment) => {
+        const { isLiked } = await getCommentStatus(ctx, comment._id);
+
+        return {
+          ...comment,
+          id: comment._id,
+          dateCreated: comment._creationTime,
+          isLiked: isLiked,
+        };
+      })
+    );
+
+    return {
+      ...results,
+      page,
+    };
   },
 });

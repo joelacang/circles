@@ -91,7 +91,8 @@ const UserMenu = () => {
             subtitle={user?.username ? `@${user.username}` : ""}
             user={{
               id: user.id,
-              name: user.fullName ?? "",
+              firstName: user.firstName,
+              lastName: user.lastName,
               username: user.username,
               imageUrl: user.imageUrl,
             }}
@@ -104,7 +105,8 @@ const UserMenu = () => {
             <UserItem
               user={{
                 id: user.id,
-                name: user.fullName ?? "",
+                firstName: user.firstName,
+                lastName: user.lastName,
                 username: user.username,
                 imageUrl: user.imageUrl,
               }}

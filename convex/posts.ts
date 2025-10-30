@@ -4,6 +4,7 @@ import { AUDIENCE, Audience } from "@/types/enum";
 import { paginationOptsValidator } from "convex/server";
 import { Post } from "@/features/posts/types";
 import { getPostData, getPostStatus } from "./helpers/posts";
+import { updateStats } from "./helpers/stats";
 
 export const create = mutation({
   args: {
@@ -30,6 +31,13 @@ export const create = mutation({
       quotes: 0,
       bookmarks: 0,
       audience: args.audience,
+    });
+
+    await updateStats({
+      ctx,
+      clerkId: loggedUserId,
+      mode: "add",
+      field: "posts",
     });
 
     return { postId };
@@ -61,13 +69,19 @@ export const getUserPosts = query({
 
 export const getPostDetail = query({
   args: {
-    postId: v.id("posts"),
+    postId: v.string(),
   },
   handler: async (ctx, args) => {
-    const result = await ctx.db.get(args.postId);
+    const postId = ctx.db.normalizeId("posts", args.postId);
 
-    if (!result) throw new Error("Post Not Found.");
+    if (!postId) return { success: false, error: "Post Not Found." };
 
-    return await getPostData(ctx, result);
+    const result = await ctx.db.get(postId);
+
+    if (!result) return { success: false, error: "Post Not Found." };
+
+    const post = await getPostData(ctx, result);
+
+    return { success: true, data: post };
   },
 });

@@ -1,5 +1,4 @@
 import i18n from "@/i18n";
-import { convexId } from "@/utils";
 import { z } from "zod";
 
 export const dateOfBirthSchema = z.date().refine(
@@ -18,14 +17,9 @@ export const dateOfBirthSchema = z.date().refine(
 );
 
 export const userProfileSchema = z.object({
-  profileId: convexId("profiles").optional(),
+  profileId: z.string().optional(),
   firstName: z.string().min(1, i18n.t("users:firstNameError")),
   lastName: z.string().min(1, i18n.t("users:lastNameError")),
-  username: z
-    .string()
-    .min(4, i18n.t("usernameMinError"))
-    .max(64, i18n.t("usernameMaxError"))
-    .regex(/^[a-zA-Z0-9_-]+$/, i18n.t("invalidUsernameError")),
   dateOfBirth: dateOfBirthSchema,
   website: z.url(i18n.t("users:invalidUrlError")).or(z.literal("")),
   bio: z

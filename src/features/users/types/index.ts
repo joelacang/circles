@@ -1,6 +1,9 @@
-export type User = {
+import { Id } from "../../../../convex/_generated/dataModel";
+
+export type UserPreview = {
   id: string;
-  name: string;
+  firstName?: string | null;
+  lastName?: string | null;
   username?: string | null;
   imageUrl?: string | null;
 };

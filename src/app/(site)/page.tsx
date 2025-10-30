@@ -1,16 +1,19 @@
-import UserAvatar from "@/features/users/components/user-avatar";
-import { SIZE } from "@/types/enum";
+"use client";
+import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
+
+import { useUser } from "@clerk/nextjs";
 
 const SitePage = () => {
+  const { user } = useUser();
+  if (!user) return null;
+
+  const { id, firstName, lastName, username, imageUrl } = user;
   return (
-    <div>
-      <p>This is just the home page.</p>
+    <div className="border w-full max-w-sm">
       <div className="flex gap-4 items-center justify-start">
-        <UserAvatar size={SIZE.MICRO} fallback="M" />
-        <UserAvatar size={SIZE.SMALL} fallback="S" />
-        <UserAvatar size={SIZE.DEFAULT} fallback="D" />
-        <UserAvatar size={SIZE.LARGE} fallback="L" />
-        <UserAvatar size={SIZE.XLARGE} fallback="X" />
+        <ProfileHoverCard
+          user={{ id, firstName, lastName, username, imageUrl }}
+        />
       </div>
     </div>
   );

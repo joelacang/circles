@@ -10,9 +10,14 @@ import {
 type DateSelectProps = {
   value: Date;
   onChange: (newDate: Date) => void;
+  disabled?: boolean;
 };
 
-export const DateSelect: React.FC<DateSelectProps> = ({ value, onChange }) => {
+export const DateSelect: React.FC<DateSelectProps> = ({
+  value,
+  onChange,
+  disabled = false,
+}) => {
   const day = value.getDate();
   const month = value.getMonth(); // 0-indexed
   const year = value.getFullYear();
@@ -49,6 +54,7 @@ export const DateSelect: React.FC<DateSelectProps> = ({ value, onChange }) => {
       <Select
         value={String(day)}
         onValueChange={(val) => handleChange("day", parseInt(val))}
+        disabled={disabled}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Day" />
@@ -66,6 +72,7 @@ export const DateSelect: React.FC<DateSelectProps> = ({ value, onChange }) => {
       <Select
         value={String(month)}
         onValueChange={(val) => handleChange("month", parseInt(val))}
+        disabled={disabled}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Month" />
@@ -83,6 +90,7 @@ export const DateSelect: React.FC<DateSelectProps> = ({ value, onChange }) => {
       <Select
         value={String(year)}
         onValueChange={(val) => handleChange("year", parseInt(val))}
+        disabled={disabled}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Year" />

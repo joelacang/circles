@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userProfileSchema, UserProfileSchema } from "../schemas";
+
 import { useUser } from "@clerk/nextjs";
 import {
   InputGroup,
@@ -17,44 +17,100 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group";
 import { Input } from "@/components/ui/input";
-import { AtSign, Globe } from "lucide-react";
+import { Globe, Loader2Icon } from "lucide-react";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DateSelect } from "@/components/date-select";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import UserAvatar from "../../users/components/user-avatar";
+import { SIZE } from "@/types/enum";
+import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
+import { UserProfileSchema, userProfileSchema } from "@/features/users/schemas";
+import { Profile } from "../types";
+import toast from "react-hot-toast";
+import { useProfileDialog } from "@/features/users/hooks/use-profile-dialog";
 
-const UserProfileForm = () => {
-  const { user } = useUser();
-  const updateProfile = useMutation(api.users.updateProfile);
+interface Props {
+  profile: Profile | null;
+  clerkId: string;
+}
+const UserProfileForm = ({ profile, clerkId }: Props) => {
+  const { onClose } = useProfileDialog();
+  const updateProfileFn = useMutation(api.profiles.upsert);
+  const { mutate: updateProfile, isLoading } =
+    useConvexMutationHandler(updateProfileFn);
   const { t } = useTranslation();
+  const { user } = useUser();
   const form = useForm<UserProfileSchema>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      profileId: undefined,
+      profileId: profile?.id,
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
-      username: user?.username ?? "",
-      dateOfBirth: new Date(),
-      website: "",
-      bio: "",
-      isPrivate: false,
+      dateOfBirth: profile?.dateOfBirth
+        ? new Date(profile?.dateOfBirth)
+        : new Date(),
+      website: profile?.website ?? "",
+      bio: profile?.bio ?? "",
+      isPrivate: profile?.isPrivate ?? false,
     },
     mode: "onBlur",
   });
 
-  const onSubmit = (values: UserProfileSchema) => {
-    updateProfile({
-      ...values,
-      dateOfBirth: values.dateOfBirth.getTime(),
-      profileId: (values.profileId as Id<"profiles">) ?? undefined,
-    });
+  const onSubmit = async (values: UserProfileSchema) => {
+    const { dateOfBirth, profileId, firstName, lastName, ...others } = values;
+
+    if (!user) {
+      toast.error("Unauthorized. You are not logged in.");
+      return;
+    }
+
+    if (user.id !== clerkId) {
+      toast.error("Unauthorized. You not allowed to update this profile.");
+      return;
+    }
+
+    try {
+      user.update({
+        firstName,
+        lastName,
+      });
+
+      updateProfile(
+        {
+          ...others,
+          profileId: profileId ? (profileId as Id<"profiles">) : undefined,
+          clerkId,
+          dateOfBirth: dateOfBirth.getTime(),
+        },
+        {
+          onLoading: () => {
+            toast.loading("Updating Profile...", {
+              id: "update-profile-toast",
+            });
+          },
+          onSuccess: () => {
+            toast.success("Profile has been updated.");
+            onClose();
+          },
+          onError: (error) => {
+            toast.error(`Error updating profile: ${error}`);
+          },
+          onSettled: () => {
+            toast.dismiss("update-profile-toast");
+          },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update profile. Please try again.");
+    }
   };
 
   return (
@@ -62,12 +118,10 @@ const UserProfileForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col">
         <div className="max-h-[60vh] overflow-y-auto space-y-4 p-4">
           <div className="flex items-center justify-center py-4">
-            <Avatar className="size-24">
-              <AvatarImage src={user?.imageUrl} />
-            </Avatar>
+            <UserAvatar imageUrl={user?.imageUrl} size={SIZE.XLARGE} />
           </div>
 
-          <div className="w-full grid grid-cols-2 gap-4 pb-6">
+          <div className="w-full grid grid-cols-2 gap-4 ">
             <FormField
               name="firstName"
               control={form.control}
@@ -77,6 +131,7 @@ const UserProfileForm = () => {
                   <FormControl>
                     <Input
                       placeholder={t("users:firstNamePlaceholder")}
+                      disabled={isLoading}
                       required
                       {...field}
                     />
@@ -94,6 +149,7 @@ const UserProfileForm = () => {
                   <FormControl>
                     <Input
                       placeholder={t("users:lastNamePlaceholder")}
+                      disabled={isLoading}
                       required
                       {...field}
                     />
@@ -103,28 +159,7 @@ const UserProfileForm = () => {
               )}
             />
           </div>
-          <FormField
-            name="username"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("users:username")}</FormLabel>
-                <FormControl>
-                  <InputGroup>
-                    <InputGroupInput
-                      placeholder={t("users:usernamePlaceholder")}
-                      required
-                      {...field}
-                    />
-                    <InputGroupAddon>
-                      <AtSign className="text-primary" />
-                    </InputGroupAddon>
-                  </InputGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             name="dateOfBirth"
             control={form.control}
@@ -132,7 +167,11 @@ const UserProfileForm = () => {
               <FormItem>
                 <FormLabel>{t("users:dateOfBirth")}</FormLabel>
                 <FormControl>
-                  <DateSelect value={field.value} onChange={field.onChange} />
+                  <DateSelect
+                    disabled={isLoading}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -148,6 +187,7 @@ const UserProfileForm = () => {
                   <InputGroup>
                     <InputGroupInput
                       placeholder={t("users:websitePlaceholder")}
+                      disabled={isLoading}
                       {...field}
                     />
                     <InputGroupAddon>
@@ -170,6 +210,7 @@ const UserProfileForm = () => {
                   <FormControl>
                     <InputGroup>
                       <InputGroupTextarea
+                        disabled={isLoading}
                         placeholder={t("users:bioPlaceholder")}
                         className="max-h-24"
                         {...field}
@@ -202,6 +243,7 @@ const UserProfileForm = () => {
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="cursor-pointer"
+                      disabled={isLoading}
                     />
                     <Label>{t("users:privateProfile")}</Label>
                   </div>
@@ -211,7 +253,11 @@ const UserProfileForm = () => {
           />
         </div>
         <DialogFooter className="pt-4">
-          <Button>{t("users:updateButton")}</Button>
+          <Button disabled={isLoading}>
+            {isLoading && <Loader2Icon className="animate-spin" />}
+            {t("users:updateButton")}
+            {isLoading ? "..." : ""}
+          </Button>
         </DialogFooter>
       </form>
     </Form>

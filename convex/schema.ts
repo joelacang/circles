@@ -10,6 +10,22 @@ export default defineSchema({
     bio: v.optional(v.string()),
     isPrivate: v.boolean(),
   }).index("by_clerkId", ["clerkId"]),
+  stats: defineTable({
+    clerkId: v.string(),
+    followers: v.number(),
+    following: v.number(),
+    posts: v.number(),
+  }).index("by_clerkId", ["clerkId"]),
+  follows: defineTable({
+    followedUserId: v.string(),
+    followedByUserId: v.string(),
+  })
+    .index("by_followedUserId", ["followedUserId"])
+    .index("by_followedByUserId", ["followedByUserId"])
+    .index("by_followedUserId_followedByUserId", [
+      "followedUserId",
+      "followedByUserId",
+    ]),
   posts: defineTable({
     body: v.string(),
     authorId: v.string(),
@@ -54,6 +70,13 @@ export default defineSchema({
     .index("by_likerId_postId", ["likerId", "postId"])
     .index("by_likerId", ["likerId"])
     .index("by_postId", ["postId"]),
+  commentLikes: defineTable({
+    commentId: v.id("comments"),
+    likerId: v.string(),
+  })
+    .index("by_likerId_commentId", ["likerId", "commentId"])
+    .index("by_likerId", ["likerId"])
+    .index("by_commentId", ["commentId"]),
   folders: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
