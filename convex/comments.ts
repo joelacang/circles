@@ -4,6 +4,7 @@ import { paginationOptsValidator } from "convex/server";
 import { Order } from "@/types/enum";
 import { Comment } from "@/features/comments/types";
 import { getCommentStatus } from "./helpers/comments";
+import { addNotification } from "./helpers/notifications";
 
 export const create = mutation({
   args: {
@@ -37,7 +38,25 @@ export const create = mutation({
       await ctx.db.patch(args.parentCommentId, {
         comments: (parentComment.comments ?? 0) + 1,
       });
+
+      await addNotification({
+        ctx,
+        recipientId: parentComment.authorId,
+        source: {
+          action: "comment",
+          commentId: parentComment._id,
+        },
+      });
     }
+
+    await addNotification({
+      ctx,
+      recipientId: post.authorId,
+      source: {
+        action: "comment",
+        postId: post._id,
+      },
+    });
 
     //Update Post Comment Counter
     await ctx.db.patch(args.postId, {

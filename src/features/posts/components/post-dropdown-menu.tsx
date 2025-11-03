@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MenuItem } from "@/features/sidebar/types";
+import { MenuItem } from "@/features/navigation/types";
 import {
   CopyIcon,
   FlagIcon,

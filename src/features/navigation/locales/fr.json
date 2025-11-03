@@ -4,5 +4,6 @@
   "searchMenu": "Rechercher",
   "circlesMenu": "Cercles",
   "messagesMenu": "Messages",
-  "createPost": "Créer une Publication"
+  "createPost": "Créer une Publication",
+  "notificationsMenu": "Notifications"
 }

@@ -2,6 +2,8 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getFollowData, isFollowing } from "./helpers/follows";
 import { updateStats } from "./helpers/stats";
+import { paginationOptsValidator } from "convex/server";
+import { addNotification } from "./helpers/notifications";
 
 export const followUser = mutation({
   args: { userIdToFollow: v.string() },
@@ -41,6 +43,12 @@ export const followUser = mutation({
         field: "following",
       }),
     ]);
+
+    await addNotification({
+      ctx,
+      recipientId: args.userIdToFollow,
+      source: { action: "follow" },
+    });
 
     return followId;
   },
@@ -87,5 +95,43 @@ export const getIsFollowing = query({
   args: { userIdToCheck: v.string() },
   handler: async (ctx, args) => {
     return await isFollowing({ ctx, userIdToCheck: args.userIdToCheck });
+  },
+});
+
+export const getFollowers = query({
+  args: { paginationOpts: paginationOptsValidator, userId: v.string() },
+  handler: async (ctx, args) => {
+    const followers = await ctx.db
+      .query("follows")
+      .withIndex("by_followedUserId", (q) =>
+        q.eq("followedUserId", args.userId)
+      )
+      .paginate(args.paginationOpts);
+
+    const followerIds = followers.page.map((f) => f.followedByUserId);
+
+    return {
+      ...followers,
+      page: followerIds,
+    };
+  },
+});
+
+export const getFollowing = query({
+  args: { paginationOpts: paginationOptsValidator, userId: v.string() },
+  handler: async (ctx, args) => {
+    const followings = await ctx.db
+      .query("follows")
+      .withIndex("by_followedByUserId", (q) =>
+        q.eq("followedByUserId", args.userId)
+      )
+      .paginate(args.paginationOpts);
+
+    const followingIds = followings.page.map((f) => f.followedUserId);
+
+    return {
+      ...followings,
+      page: followingIds,
+    };
   },
 });

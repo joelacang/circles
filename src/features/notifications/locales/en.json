@@ -1,0 +1,13 @@
+{
+  "notifications": "Notifications",
+  "unreadNotifications": "unread notifications",
+  "followAction": "followed you.",
+  "likePostAction": "liked your post.",
+  "commentPostAction": "commented on your post.",
+  "mentionPostAction": "mentioned you on a post.",
+  "quotePostAction": "quoted on your post.",
+  "likeCommentAction": "liked your comment.",
+  "replyCommentAction": "replied on your comment",
+  "mentionCommentAction": "mentioned you on a comment.",
+  "quoteCommentAction": "quoted on your comment"
+}

@@ -8,6 +8,7 @@ import { Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LoadingMessage from "@/components/loading-message";
 import RepliesLoader from "./replies-loader";
+import CommentSkeleton from "./comment-skeleton";
 
 interface Props {
   postId: Id<"posts">;
@@ -30,7 +31,13 @@ const CommentsLoader = ({ postId, order }: Props) => {
   );
 
   if (isLoadingFirstPage) {
-    return <LoadingMessage message="Loading Comments..." />;
+    return (
+      <div className="space-y-4">
+        <CommentSkeleton />
+        <CommentSkeleton />
+        <CommentSkeleton />
+      </div>
+    );
   }
 
   return (

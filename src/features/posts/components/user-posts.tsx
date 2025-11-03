@@ -5,11 +5,6 @@ import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { Post } from "../types";
 import PostCardSkeleton from "./post-card-skeleton";
 import InfoMessage from "@/components/info-message";
-import ToastMessage from "@/components/toast-message";
-import { MODE } from "@/types/enum";
-import { Button } from "@/components/ui/button";
-import toast from "react-hot-toast";
-import PostActionButton from "./post-action-button";
 import CreatePostButton from "./create-post-button";
 
 interface Props {

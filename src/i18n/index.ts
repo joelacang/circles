@@ -9,7 +9,7 @@ i18n
   .init({
     resources,
     fallbackLng: "en",
-    ns: ["users", "sidebar", "posts", "docs"],
+    ns: ["users", "sidebar", "posts", "docs", "notifications"],
     defaultNS: "users",
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],

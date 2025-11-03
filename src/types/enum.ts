@@ -42,3 +42,19 @@ export enum MODE {
   INFO,
   LOADING,
 }
+
+export const NotifAction = v.union(
+  v.literal("follow"),
+  v.literal("like"),
+  v.literal("comment"),
+  v.literal("quote"),
+  v.literal("mention")
+);
+
+export enum NOTIF_ACTION {
+  FOLLOW = "follow",
+  LIKE = "like",
+  COMMENT = "comment",
+  QUOTE = "quote",
+  MENTION = "mention",
+}

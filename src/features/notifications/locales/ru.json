@@ -1,0 +1,13 @@
+{
+  "notifications": "Уведомления",
+  "unreadNotifications": "непрочитанные уведомления",
+  "followAction": "подписался на вас.",
+  "likePostAction": "понравился ваш пост.",
+  "commentPostAction": "прокомментировал ваш пост.",
+  "mentionPostAction": "упомянул вас в посте.",
+  "quotePostAction": "цитировал ваш пост.",
+  "likeCommentAction": "понравился ваш комментарий.",
+  "replyCommentAction": "ответил на ваш комментарий.",
+  "mentionCommentAction": "упомянул вас в комментарии.",
+  "quoteCommentAction": "цитировал ваш комментарий."
+}

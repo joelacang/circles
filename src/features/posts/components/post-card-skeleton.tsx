@@ -3,7 +3,7 @@ import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
 
 const PostCardSkeleton = () => {
   return (
-    <div className="w-full border rounded-xl ">
+    <div className="w-full border rounded-xl px-4 ">
       {/* Header */}
       <div className="flex  items-center justify-between w-full">
         <UserItemSkeleton />

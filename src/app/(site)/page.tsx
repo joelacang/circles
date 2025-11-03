@@ -11,9 +11,7 @@ const SitePage = () => {
   return (
     <div className="border w-full max-w-sm">
       <div className="flex gap-4 items-center justify-start">
-        <ProfileHoverCard
-          user={{ id, firstName, lastName, username, imageUrl }}
-        />
+        This is the home page.
       </div>
     </div>
   );

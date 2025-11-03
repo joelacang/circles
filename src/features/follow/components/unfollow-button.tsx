@@ -26,7 +26,7 @@ const UnfollowButton = ({ user }: Props) => {
             () => (
               <ToastMessage
                 mode={MODE.LOADING}
-                message={`Unfollowing the user @${user.username ?? "user"}...`}
+                description={`Unfollowing the user @${user.username ?? "user"}...`}
               />
             ),
             { id: "unfollow-user-toast" }

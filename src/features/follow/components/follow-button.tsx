@@ -27,7 +27,7 @@ const FollowButton = ({ user }: Props) => {
             () => (
               <ToastMessage
                 mode={MODE.LOADING}
-                message={`Following the user @${user.username ?? "user"}...`}
+                description={`Following the user @${user.username ?? "user"}...`}
               />
             ),
             { id: "follow-user-toast" }

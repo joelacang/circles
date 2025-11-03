@@ -13,6 +13,7 @@ import { ORDER } from "@/types/enum";
 import { useState } from "react";
 
 import InfoMessage from "@/components/info-message";
+import CommentsLoader from "@/features/comments/components/comments-loader";
 
 interface Props {
   postId: string;
@@ -64,6 +65,9 @@ const PostLoader = ({ postId }: Props) => {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="py-8">
+            <CommentsLoader postId={post.data.id} order={order} />
           </div>
         </>
       )}

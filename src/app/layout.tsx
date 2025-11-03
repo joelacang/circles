@@ -5,6 +5,8 @@ import ConvexClientProvider from "@/providers/convex-client-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import DialogProvider from "@/providers/dialog-provider";
 import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "@/providers/theme-provider";
+import SheetProvider from "@/providers/sheet-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,13 +32,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClerkProvider>
-          <ConvexClientProvider>
-            <Toaster />
-            <DialogProvider />
-            {children}
-          </ConvexClientProvider>
-        </ClerkProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ClerkProvider>
+            <ConvexClientProvider>
+              <Toaster />
+              <DialogProvider />
+              <SheetProvider />
+              {children}
+            </ConvexClientProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

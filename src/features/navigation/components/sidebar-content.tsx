@@ -1,4 +1,5 @@
 import {
+  BellIcon,
   HomeIcon,
   MessageCircleIcon,
   PlusIcon,
@@ -12,10 +13,11 @@ import { useTranslation } from "react-i18next";
 import { usePostFormDialog } from "@/features/posts/hooks/use-post-form-dialog";
 import { useRouter } from "next/navigation";
 import CreatePostButton from "@/features/posts/components/create-post-button";
+import { useNotificationSheet } from "@/features/notifications/hooks/use-notification-sheet";
 
 const SidebarContent = () => {
   const { t } = useTranslation();
-  const { onOpen } = usePostFormDialog();
+  const { onOpen: openNotifications } = useNotificationSheet();
   const router = useRouter();
   const items: MenuItem[] = [
     {
@@ -38,6 +40,12 @@ const SidebarContent = () => {
       id: "messages",
       label: t("sidebar:messagesMenu"),
       icon: MessageCircleIcon,
+    },
+    {
+      id: "notifications",
+      label: t("sidebar:notificationsMenu"),
+      icon: BellIcon,
+      action: () => openNotifications(),
     },
   ];
   return (

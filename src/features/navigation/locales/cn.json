@@ -4,5 +4,6 @@
   "searchMenu": "搜索",
   "circlesMenu": "圈子",
   "messagesMenu": "消息",
-  "createPost": "创建帖子"
+  "createPost": "创建帖子",
+  "notificationsMenu": "通知"
 }

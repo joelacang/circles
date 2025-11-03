@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Item,
   ItemContent,
@@ -11,13 +10,10 @@ import { useUser } from "@clerk/nextjs";
 import UserAvatar from "./user-avatar";
 import { UserPreview } from "@/features/users/types";
 import { useRouter } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { Button } from "@/components/ui/button";
+import { SIZE } from "@/types/enum";
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
+import { UserNameButton } from "./username-button";
 
 interface Props {
   variant?: "default" | "outline" | "muted";
@@ -26,8 +22,9 @@ interface Props {
   titleExt?: React.ReactNode;
   subtitle?: string;
   user: UserPreview;
-  redirectable?: boolean;
+  mode?: "hover" | "click";
 }
+
 const UserItem = ({
   variant = "default",
   size = "default",
@@ -35,10 +32,9 @@ const UserItem = ({
   titleExt,
   subtitle,
   user,
-  redirectable = false,
+  mode,
 }: Props) => {
   const router = useRouter();
-  const { user: loggedUser } = useUser();
   const fullName = `${user.firstName} ${user.lastName}`;
   if (!user) {
     return (
@@ -51,30 +47,44 @@ const UserItem = ({
   return (
     <Item
       variant={variant}
-      size={size === "micro" ? "sm" : size}
       className={cn("w-full", size === "sm" ? "p-2" : "p-3", className)}
     >
       <ItemMedia>
-        <UserAvatar imageUrl={user.imageUrl} fallback={user.username ?? "U"} />
+        {mode === "hover" ? (
+          <ProfileHoverCard user={user}>
+            <UserAvatar
+              size={
+                size === "default"
+                  ? SIZE.DEFAULT
+                  : size === "sm"
+                    ? SIZE.SMALL
+                    : SIZE.MICRO
+              }
+              imageUrl={user.imageUrl}
+              fallback={user.username ?? "U"}
+            />
+          </ProfileHoverCard>
+        ) : (
+          <UserAvatar
+            size={
+              size === "default"
+                ? SIZE.DEFAULT
+                : size === "sm"
+                  ? SIZE.SMALL
+                  : SIZE.MICRO
+            }
+            imageUrl={user.imageUrl}
+            fallback={user.username ?? "U"}
+          />
+        )}
       </ItemMedia>
       <ItemContent className="flex flex-col items-start justify-center">
-        {redirectable ? (
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Button
-                variant="link"
-                className="size-fit p-0 font-semibold text-base"
-              >
-                {fullName}
-              </Button>
-            </HoverCardTrigger>
-            <HoverCardContent
-              className="p-4 m-2 w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ProfileHoverCard user={user} />
-            </HoverCardContent>
-          </HoverCard>
+        {mode === "hover" ? (
+          <ProfileHoverCard user={user}>
+            <UserNameButton user={user} />
+          </ProfileHoverCard>
+        ) : mode === "click" ? (
+          <UserNameButton user={user} />
         ) : (
           <ItemTitle>{fullName}</ItemTitle>
         )}

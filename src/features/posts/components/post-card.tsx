@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
 import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
+import { TextProcessor } from "@/lib/text-processor";
 
 interface Props {
   post: Post;
@@ -46,7 +47,7 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
             <UserItem
               user={author}
               subtitle={`${formatDistanceToNowStrict(new Date(post.dateCreated))} ago`}
-              redirectable
+              mode="hover"
             />
           )}
           <PostDropdownMenu />
@@ -54,7 +55,7 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
 
         {/* Body */}
         <div className="p-4">
-          <p className="text-sm">{post.body}</p>
+          <TextProcessor text={post.body} />
         </div>
 
         {/* Attachments */}

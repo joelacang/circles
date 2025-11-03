@@ -4,7 +4,7 @@ import { ModeValues } from "@/utils/get-values";
 import { LucideIcon } from "lucide-react";
 
 interface Props {
-  message: string;
+  message?: string;
   description?: string;
   icon?: LucideIcon;
   mode?: MODE;
@@ -28,17 +28,20 @@ const ToastMessage = ({
         <div className="">
           <Icon
             className={cn(
-              "size-12",
+              mode === MODE.LOADING ? "size-6" : "size-12",
               mode === MODE.LOADING ? "animate-spin" : "animate-none"
             )}
             color={modeDisplay.color}
           />
         </div>
 
-        <div className="flex-1 w-full flex flex-col  pr-4">
-          <p className="font-semibold" style={{ color: modeDisplay.color }}>
-            {message}
-          </p>
+        <div className="flex-1 w-full flex flex-col pr-4">
+          {message && (
+            <p className="font-semibold" style={{ color: modeDisplay.color }}>
+              {message}
+            </p>
+          )}
+
           {description && (
             <p className="text-sm text-muted-foreground">{description}</p>
           )}

@@ -35,21 +35,23 @@ const ProfileSection = ({ profile, user }: Props) => {
       <div className="flex w-full flex-col lg:flex-row items-start justify-start gap-8">
         <div className="w-full lg:w-fit flex flex-col gap-4 items-center justify-center lg:justify-start">
           <UserAvatar imageUrl={user?.imageUrl} size={SIZE.XLARGE} />
-
-          {isFollowing === undefined ? (
-            <div>
-              <Skeleton className="h-9 w-24" />
-            </div>
-          ) : (
+          {!ownProfile && (
             <>
-              {isFollowing ? (
-                <UnfollowButton user={user} />
+              {isFollowing === undefined ? (
+                <div>
+                  <Skeleton className="h-9 w-24" />
+                </div>
               ) : (
-                <FollowButton user={user} />
+                <>
+                  {isFollowing ? (
+                    <UnfollowButton user={user} />
+                  ) : (
+                    <FollowButton user={user} />
+                  )}
+                </>
               )}
             </>
           )}
-          {!ownProfile && <></>}
         </div>
         <div className=" w-full  space-y-4">
           <div

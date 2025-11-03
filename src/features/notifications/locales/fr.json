@@ -1,0 +1,13 @@
+{
+  "notifications": "Notifications",
+  "unreadNotifications": "notifications non lues",
+  "followAction": "vous a suivi.",
+  "likePostAction": "a aimé votre publication.",
+  "commentPostAction": "a commenté votre publication.",
+  "mentionPostAction": "vous a mentionné dans une publication.",
+  "quotePostAction": "a cité votre publication.",
+  "likeCommentAction": "a aimé votre commentaire.",
+  "replyCommentAction": "a répondu à votre commentaire.",
+  "mentionCommentAction": "vous a mentionné dans un commentaire.",
+  "quoteCommentAction": "a cité votre commentaire."
+}

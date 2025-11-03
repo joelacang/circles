@@ -94,4 +94,53 @@ export default defineSchema({
     .index("by_postId", ["postId"])
     .index("by_bookmarkerId", ["bookmarkerId"])
     .index("by_folderId", ["folderId"]),
+  notifications: defineTable({
+    groupDate: v.string(),
+    recipientId: v.string(),
+    senderIds: v.array(
+      v.object({ senderId: v.string(), _creationTime: v.number() })
+    ),
+    source: v.union(
+      v.object({
+        action: v.literal("follow"),
+      }),
+      v.object({
+        action: v.literal("like"),
+        postId: v.id("posts"),
+      }),
+      v.object({
+        action: v.literal("like"),
+        commentId: v.id("comments"),
+      }),
+      v.object({
+        action: v.literal("comment"),
+        postId: v.id("posts"),
+      }),
+      v.object({
+        action: v.literal("comment"),
+        commentId: v.id("comments"),
+      }),
+      v.object({
+        action: v.literal("mention"),
+        postId: v.id("posts"),
+      }),
+      v.object({
+        action: v.literal("quote"),
+        postId: v.id("posts"),
+      })
+    ),
+  })
+    .index("by_recipientId", ["recipientId"])
+    .index("by_recipientId_action_postId_date", [
+      "recipientId",
+      "source.action",
+      "source.postId",
+      "groupDate",
+    ])
+    .index("by_recipientId_action_commentId_date", [
+      "recipientId",
+      "source.action",
+      "source.commentId",
+      "groupDate",
+    ]),
 });

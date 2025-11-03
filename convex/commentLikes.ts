@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { addNotification } from "./helpers/notifications";
 
 export const likeComment = mutation({
   args: {
@@ -30,6 +31,14 @@ export const likeComment = mutation({
       likes: comment.likes + 1,
     });
 
+    await addNotification({
+      ctx,
+      recipientId: comment.authorId,
+      source: {
+        action: "like",
+        commentId: comment._id,
+      },
+    });
     return likeId;
   },
 });

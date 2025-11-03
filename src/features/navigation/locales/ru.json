@@ -4,5 +4,6 @@
   "searchMenu": "Поиск",
   "circlesMenu": "Круги",
   "messagesMenu": "Сообщения",
-  "createPost": "Создать пост"
+  "createPost": "Создать пост",
+  "notificationsMenu": "Уведомления"
 }

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import UserItem from "./user-item";
-import { MenuItem } from "@/features/sidebar/types";
+import { MenuItem } from "@/features/navigation/types";
 import {
   CheckCircle2Icon,
   CheckCircleIcon,
@@ -18,6 +18,7 @@ import {
   SettingsIcon,
   SunIcon,
   UserIcon,
+  Wifi,
   XIcon,
 } from "lucide-react";
 import { useClerk, useUser } from "@clerk/nextjs";
@@ -27,14 +28,22 @@ import { languages } from "@/i18n/resources";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
+import UserAvatar from "./user-avatar";
+import { cn } from "@/lib/utils";
+import { SIZE } from "@/types/enum";
+import { useTheme } from "next-themes";
 
-const UserMenu = () => {
+interface Props {
+  mode: "default" | "avatar";
+}
+const UserMenu = ({ mode = "default" }: Props) => {
   const { openUserProfile, signOut } = useClerk();
   const { user } = useUser();
   const { t, i18n } = useTranslation();
   const { onOpen } = useProfileDialog();
   const currentLanguage = i18n.language;
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   const items: MenuItem[] = [
     {
@@ -62,11 +71,15 @@ const UserMenu = () => {
       id: "set-to-light-mode",
       label: t("users:setLightMode"),
       icon: SunIcon,
+      hidden: theme === "light",
+      action: () => setTheme("light"),
     },
     {
       id: "set-to-dark-mode",
       label: t("users:setDarkMode"),
       icon: MoonIcon,
+      hidden: theme === "dark",
+      action: () => setTheme("dark"),
     },
     {
       id: "manage-account",
@@ -84,22 +97,33 @@ const UserMenu = () => {
   ];
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="w-full cursor-pointer">
+      <DropdownMenuTrigger
+        className={cn(
+          " cursor-pointer",
+          mode === "default" ? "w-full" : "w-fit"
+        )}
+      >
         {user && (
-          <UserItem
-            variant="outline"
-            subtitle={user?.username ? `@${user.username}` : ""}
-            user={{
-              id: user.id,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              username: user.username,
-              imageUrl: user.imageUrl,
-            }}
-          />
+          <>
+            {mode === "default" ? (
+              <UserItem
+                variant="outline"
+                subtitle={user?.username ? `@${user.username}` : ""}
+                user={{
+                  id: user.id,
+                  firstName: user.firstName,
+                  lastName: user.lastName,
+                  username: user.username,
+                  imageUrl: user.imageUrl,
+                }}
+              />
+            ) : (
+              <UserAvatar imageUrl={user.imageUrl} size={SIZE.MICRO} />
+            )}
+          </>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-72">
+      <DropdownMenuContent className="w-72 mx-4 z-[70]">
         <DropdownMenuGroup>
           {user && (
             <UserItem

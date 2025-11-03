@@ -1,4 +1,4 @@
-import { MenuItem } from "@/features/sidebar/types";
+import { MenuItem } from "@/features/navigation/types";
 import {
   DropdownMenuPortal,
   DropdownMenuSub,
@@ -24,7 +24,7 @@ const MyDropdownMenuItemSub = ({ item }: Props) => {
         </div>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
-        <DropdownMenuSubContent>
+        <DropdownMenuSubContent className="z-[70] min-w-40 m-2">
           {item.subMenus.map((subMenuItem) => (
             <MyDropdownMenuItem key={subMenuItem.id} item={subMenuItem} />
           ))}

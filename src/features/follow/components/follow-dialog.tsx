@@ -6,6 +6,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useFollowDialog } from "../hooks/use-follow-dialog";
+import { Input } from "@/components/ui/input";
+import FollowersSection from "./followers-section";
+import FollowingSection from "./following-section";
 
 const FollowDialog = () => {
   const { open, onClose, isPending, data } = useFollowDialog();
@@ -37,8 +40,13 @@ const FollowDialog = () => {
                 : `${name} is not following anybody.`}
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <p>This is the follows dialog.</p>
+        <div className="space-y-4">
+          <Input placeholder="Enter user's name to search..." />
+          {data.mode === "followers" ? (
+            <FollowersSection userId={data.user.id} />
+          ) : data.mode === "following" ? (
+            <FollowingSection userId={data.user.id} />
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
