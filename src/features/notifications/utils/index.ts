@@ -14,7 +14,7 @@ export function getNotificationDisplay({
   action,
   mode,
 }: {
-  action: NOTIF_ACTION;
+  action: "follow" | "like" | "comment" | "mention" | "quote";
   mode?: "post" | "comment";
 }): NotifDisplay {
   switch (action) {

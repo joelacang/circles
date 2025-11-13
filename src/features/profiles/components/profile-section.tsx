@@ -18,23 +18,22 @@ import { useFollowDialog } from "@/features/follow/hooks/use-follow-dialog";
 
 interface Props {
   profile: Profile;
-  user: UserPreview;
 }
 
-const ProfileSection = ({ profile, user }: Props) => {
+const ProfileSection = ({ profile }: Props) => {
   const { user: loggedUser } = useUser();
   const isMobile = useIsMobile();
   const { onOpen } = useFollowDialog();
   const isFollowing = useQuery(api.follows.getIsFollowing, {
-    userIdToCheck: user.id,
+    userIdToCheck: profile.user.id,
   });
 
-  const ownProfile = loggedUser?.id === user.id;
+  const ownProfile = loggedUser?.id === profile.user.clerkId;
   return (
     <div className="pt-8 px-6 relative">
       <div className="flex w-full flex-col lg:flex-row items-start justify-start gap-8">
         <div className="w-full lg:w-fit flex flex-col gap-4 items-center justify-center lg:justify-start">
-          <UserAvatar imageUrl={user?.imageUrl} size={SIZE.XLARGE} />
+          <UserAvatar imageUrl={profile.user.imageUrl} size={SIZE.XLARGE} />
           {!ownProfile && (
             <>
               {isFollowing === undefined ? (
@@ -44,9 +43,9 @@ const ProfileSection = ({ profile, user }: Props) => {
               ) : (
                 <>
                   {isFollowing ? (
-                    <UnfollowButton user={user} />
+                    <UnfollowButton user={profile.user} />
                   ) : (
-                    <FollowButton user={user} />
+                    <FollowButton user={profile.user} />
                   )}
                 </>
               )}
@@ -63,12 +62,11 @@ const ProfileSection = ({ profile, user }: Props) => {
             )}
           >
             <div className="flex flex-col items-center lg:items-start">
-              <p className="text-xl font-bold">{`${user.firstName} ${user.lastName}`}</p>
+              <p className="text-xl font-bold">{`${profile.user.name}`}</p>
               <p className="text-base text-muted-foreground">
-                @{user?.username}
+                @{profile.user.username}
               </p>
             </div>
-            {!isMobile && ownProfile && <EditProfileButton profile={profile} />}
           </div>
           <div className="flex flex-1  w-full">
             <div className="grid grid-cols-3 w-full gap-4 py-4">
@@ -77,7 +75,11 @@ const ProfileSection = ({ profile, user }: Props) => {
                 count={profile.followers}
                 tooltip="Show Followers"
                 action={() =>
-                  onOpen({ user, mode: "followers", count: profile.followers })
+                  onOpen({
+                    user: profile.user,
+                    mode: "followers",
+                    count: profile.followers,
+                  })
                 }
               />
               <ProfileCount
@@ -85,7 +87,11 @@ const ProfileSection = ({ profile, user }: Props) => {
                 count={profile.followings}
                 tooltip="Show Following"
                 action={() =>
-                  onOpen({ user, mode: "following", count: profile.followings })
+                  onOpen({
+                    user: profile.user,
+                    mode: "following",
+                    count: profile.followings,
+                  })
                 }
               />
               <ProfileCount
@@ -105,13 +111,13 @@ const ProfileSection = ({ profile, user }: Props) => {
         </div>
       </div>
       <div className="py-8 space-y-4">
-        {user && <UserPosts userId={user.id} />}
+        <UserPosts userId={profile.user.id} />
       </div>
-      <div
-        className={cn("absolute top-8 right-4", isMobile ? "block" : "hidden")}
-      >
-        <EditProfileButton profile={profile} />
-      </div>
+      {ownProfile && (
+        <div className={cn("absolute top-8 right-4")}>
+          <EditProfileButton profile={profile} />
+        </div>
+      )}
     </div>
   );
 };

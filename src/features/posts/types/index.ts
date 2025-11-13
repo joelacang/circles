@@ -5,8 +5,7 @@ import { AUDIENCE } from "@/types/enum";
 export type Post = {
   id: Id<"posts">;
   body: string;
-  authorId: string;
-  author?: UserPreview | null;
+  author: UserPreview;
   quotedPostId?: Id<"posts"> | null;
   attachments: string[];
   likes: number;

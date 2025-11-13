@@ -38,21 +38,22 @@ import { useProfileDialog } from "@/features/users/hooks/use-profile-dialog";
 
 interface Props {
   profile: Profile | null;
-  clerkId: string;
 }
-const UserProfileForm = ({ profile, clerkId }: Props) => {
+const UserProfileForm = ({ profile }: Props) => {
   const { onClose } = useProfileDialog();
   const updateProfileFn = useMutation(api.profiles.upsert);
   const { mutate: updateProfile, isLoading } =
     useConvexMutationHandler(updateProfileFn);
+  const updateNameFn = useMutation(api.users.updateName);
+  const { mutate: updateName } = useConvexMutationHandler(updateNameFn);
   const { t } = useTranslation();
-  const { user } = useUser();
+  const { user: clerkUser } = useUser();
   const form = useForm<UserProfileSchema>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
       profileId: profile?.id,
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
+      firstName: clerkUser?.firstName ?? "",
+      lastName: clerkUser?.lastName ?? "",
       dateOfBirth: profile?.dateOfBirth
         ? new Date(profile?.dateOfBirth)
         : new Date(),
@@ -66,27 +67,44 @@ const UserProfileForm = ({ profile, clerkId }: Props) => {
   const onSubmit = async (values: UserProfileSchema) => {
     const { dateOfBirth, profileId, firstName, lastName, ...others } = values;
 
-    if (!user) {
+    if (!clerkUser) {
       toast.error("Unauthorized. You are not logged in.");
       return;
     }
 
-    if (user.id !== clerkId) {
+    if (profile && profile?.user.clerkId !== clerkUser?.id) {
       toast.error("Unauthorized. You not allowed to update this profile.");
       return;
     }
 
     try {
-      user.update({
-        firstName,
-        lastName,
-      });
+      clerkUser
+        .update({
+          firstName,
+          lastName,
+        })
+        .then((response) => {
+          updateName(
+            {
+              firstName: response.firstName,
+              lastName: response.lastName,
+              clerkId: response.id,
+            },
+            {
+              onError: (error) => {
+                toast.error(`Unable to update name: ${error}`);
+              },
+            }
+          );
+        })
+        .catch((error) => {
+          toast.error(`Error updating clerk name: ${error}`);
+        });
 
       updateProfile(
         {
           ...others,
           profileId: profileId ? (profileId as Id<"profiles">) : undefined,
-          clerkId,
           dateOfBirth: dateOfBirth.getTime(),
         },
         {
@@ -118,7 +136,7 @@ const UserProfileForm = ({ profile, clerkId }: Props) => {
       <form onSubmit={form.handleSubmit(onSubmit)} className=" flex flex-col">
         <div className="max-h-[60vh] overflow-y-auto space-y-4 p-4">
           <div className="flex items-center justify-center py-4">
-            <UserAvatar imageUrl={user?.imageUrl} size={SIZE.XLARGE} />
+            <UserAvatar imageUrl={clerkUser?.imageUrl} size={SIZE.XLARGE} />
           </div>
 
           <div className="w-full grid grid-cols-2 gap-4 ">

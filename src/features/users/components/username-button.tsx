@@ -7,7 +7,7 @@ interface Props {
 }
 export const UserNameButton = ({ user }: Props) => {
   const router = useRouter();
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const fullName = user.name ?? "";
 
   return (
     <Button

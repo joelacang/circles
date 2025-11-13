@@ -19,7 +19,7 @@ const NotificationSection = () => {
     );
   }
   return (
-    <div className="px-2">
+    <div className="px-2 space-y-1">
       {results.map((notif, index) => (
         <NotificationCard notif={notif} key={notif.id} />
       ))}

@@ -1,23 +1,23 @@
-import { Doc } from "../_generated/dataModel";
+import { Doc, Id } from "../_generated/dataModel";
 import { QueryCtx } from "../_generated/server";
+import { getLoggedUser } from "./users";
 
 export async function isFollowing({
   ctx,
   userIdToCheck,
 }: {
   ctx: QueryCtx;
-  userIdToCheck: string;
+  userIdToCheck: Id<"users">;
 }): Promise<boolean> {
-  const userIdentity = await ctx.auth.getUserIdentity();
-
-  if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
+  const loggedUser = await getLoggedUser(ctx);
+  if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
   const followData = await ctx.db
     .query("follows")
     .withIndex("by_followedUserId_followedByUserId", (q) =>
       q
         .eq("followedUserId", userIdToCheck)
-        .eq("followedByUserId", userIdentity.subject)
+        .eq("followedByUserId", loggedUser.id)
     )
     .unique();
 
@@ -29,20 +29,17 @@ export async function getFollowData({
   followedUserId,
 }: {
   ctx: QueryCtx;
-  followedUserId: string;
+  followedUserId: Id<"users">;
 }): Promise<Doc<"follows"> | null> {
-  const userIdentity = await ctx.auth.getUserIdentity();
-
-  if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
-
-  const loggedUserId = userIdentity.subject;
+  const loggedUser = await getLoggedUser(ctx);
+  if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
   return await ctx.db
     .query("follows")
     .withIndex("by_followedUserId_followedByUserId", (q) =>
       q
         .eq("followedUserId", followedUserId)
-        .eq("followedByUserId", loggedUserId)
+        .eq("followedByUserId", loggedUser.id)
     )
     .unique();
 }

@@ -1,15 +1,16 @@
-import { useGetUserByUsername } from "@/features/users/hooks/use-get-user-by-username";
 import ProfileLoader from "./profile-loader";
 import InfoMessage from "@/components/info-message";
 import ProfileSectionSkeleton from "./profile-section-skeleton";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 interface Props {
   username: string;
 }
 const ProfileLoaderByUsername = ({ username }: Props) => {
-  const { user, loading } = useGetUserByUsername(username);
+  const user = useQuery(api.users.getUserByUsername, { username });
 
-  if (loading) {
+  if (user === undefined) {
     return <ProfileSectionSkeleton />;
   }
   if (!user) {

@@ -2,23 +2,23 @@ import {
   BellIcon,
   HomeIcon,
   MessageCircleIcon,
-  PlusIcon,
   SearchIcon,
 } from "lucide-react";
 import { HiUserGroup } from "react-icons/hi2";
 import { MenuItem } from "../types";
-import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
-import { usePostFormDialog } from "@/features/posts/hooks/use-post-form-dialog";
 import { useRouter } from "next/navigation";
 import CreatePostButton from "@/features/posts/components/create-post-button";
 import { useNotificationSheet } from "@/features/notifications/hooks/use-notification-sheet";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 const SidebarContent = () => {
   const { t } = useTranslation();
   const { onOpen: openNotifications } = useNotificationSheet();
   const router = useRouter();
+  const unread = useQuery(api.notifications.getUnreadNotifCount);
+
   const items: MenuItem[] = [
     {
       id: "home",
@@ -40,19 +40,21 @@ const SidebarContent = () => {
       id: "messages",
       label: t("sidebar:messagesMenu"),
       icon: MessageCircleIcon,
+      action: () => router.push(`/messages`),
     },
     {
       id: "notifications",
       label: t("sidebar:notificationsMenu"),
       icon: BellIcon,
-      action: () => openNotifications(),
+      action: () => openNotifications(unread ?? 0),
+      count: unread ?? 0,
     },
   ];
   return (
     <div className="space-y-2 pt-4">
       {items.map((item) => (
         <div
-          className="flex flex-row w-full gap-4 items-center justify-start px-4 py-2 cursor-pointer hover:bg-accent hover:text-accent-foreground"
+          className="flex flex-row w-full gap-4 items-center justify-between px-4 py-2.5 cursor-pointer hover:bg-accent hover:text-accent-foreground"
           key={item.id}
           onClick={() => {
             if (item.action) {
@@ -60,8 +62,18 @@ const SidebarContent = () => {
             }
           }}
         >
-          {item.icon && <item.icon className="size-4" />}
-          <p className="  font-semibold">{item.label}</p>
+          <div className="flex flex-row gap-4 items-center justify-start">
+            {item.icon && <item.icon className="size-4" />}
+            <p className=" text-lg font-semibold">{item.label}</p>
+          </div>
+
+          {item.count && item.count > 0 ? (
+            <div className="bg-blue-500 min-w-6 flex items-center justify-center p-1 rounded-full leading-none size-fit">
+              <p className="text-xs font-semibold text-primary-foreground">
+                {item.count}
+              </p>
+            </div>
+          ) : null}
         </div>
       ))}
       <div className="px-8 py-4">

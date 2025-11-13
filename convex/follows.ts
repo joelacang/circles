@@ -4,16 +4,15 @@ import { getFollowData, isFollowing } from "./helpers/follows";
 import { updateStats } from "./helpers/stats";
 import { paginationOptsValidator } from "convex/server";
 import { addNotification } from "./helpers/notifications";
+import { getLoggedUser } from "./helpers/users";
 
 export const followUser = mutation({
-  args: { userIdToFollow: v.string() },
+  args: { userIdToFollow: v.id("users") },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
-    const loggedUserId = userIdentity.subject;
-
-    if (args.userIdToFollow === loggedUserId)
+    if (args.userIdToFollow === loggedUser.id)
       throw new Error("You cannot follow your own account.");
 
     const followData = await getFollowData({
@@ -25,20 +24,20 @@ export const followUser = mutation({
 
     const followId = await ctx.db.insert("follows", {
       followedUserId: args.userIdToFollow,
-      followedByUserId: loggedUserId,
+      followedByUserId: loggedUser.id,
     });
 
     //Update user stats
     await Promise.all([
       updateStats({
         ctx,
-        clerkId: args.userIdToFollow,
+        userId: args.userIdToFollow,
         mode: "add",
         field: "followers",
       }),
       await updateStats({
         ctx,
-        clerkId: loggedUserId,
+        userId: loggedUser.id,
         mode: "add",
         field: "following",
       }),
@@ -46,8 +45,8 @@ export const followUser = mutation({
 
     await addNotification({
       ctx,
-      recipientId: args.userIdToFollow,
-      source: { action: "follow" },
+      recipients: [{ id: args.userIdToFollow, type: "follow" }],
+      source: { action: "follow", followedUserId: args.userIdToFollow },
     });
 
     return followId;
@@ -55,14 +54,12 @@ export const followUser = mutation({
 });
 
 export const unfollowUser = mutation({
-  args: { userIdToUnfollow: v.string() },
+  args: { userIdToUnfollow: v.id("users") },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
-    const loggedUserId = userIdentity.subject;
-
-    if (loggedUserId === args.userIdToUnfollow)
+    if (loggedUser.id === args.userIdToUnfollow)
       throw new Error("You cannot unfollow your own account.");
 
     const followData = await getFollowData({
@@ -77,13 +74,13 @@ export const unfollowUser = mutation({
     await Promise.all([
       updateStats({
         ctx,
-        clerkId: args.userIdToUnfollow,
+        userId: args.userIdToUnfollow,
         mode: "deduct",
         field: "followers",
       }),
       updateStats({
         ctx,
-        clerkId: loggedUserId,
+        userId: loggedUser.id,
         mode: "deduct",
         field: "following",
       }),
@@ -92,14 +89,14 @@ export const unfollowUser = mutation({
 });
 
 export const getIsFollowing = query({
-  args: { userIdToCheck: v.string() },
+  args: { userIdToCheck: v.id("users") },
   handler: async (ctx, args) => {
     return await isFollowing({ ctx, userIdToCheck: args.userIdToCheck });
   },
 });
 
 export const getFollowers = query({
-  args: { paginationOpts: paginationOptsValidator, userId: v.string() },
+  args: { paginationOpts: paginationOptsValidator, userId: v.id("users") },
   handler: async (ctx, args) => {
     const followers = await ctx.db
       .query("follows")
@@ -118,7 +115,7 @@ export const getFollowers = query({
 });
 
 export const getFollowing = query({
-  args: { paginationOpts: paginationOptsValidator, userId: v.string() },
+  args: { paginationOpts: paginationOptsValidator, userId: v.id("users") },
   handler: async (ctx, args) => {
     const followings = await ctx.db
       .query("follows")

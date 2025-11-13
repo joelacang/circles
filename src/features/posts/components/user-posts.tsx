@@ -24,9 +24,7 @@ const UserPosts = ({ userId }: Props) => {
     5
   );
 
-  const { user, loading: isLoadingUser } = useGetUserDetails(userId);
-
-  if (isLoadingFirstPage || isLoadingUser) {
+  if (isLoadingFirstPage) {
     return (
       <div className="space-y-4">
         <PostCardSkeleton />
@@ -51,13 +49,7 @@ const UserPosts = ({ userId }: Props) => {
   return (
     <div className="space-y-4">
       {results.map((post) => (
-        <PostCard
-          key={post.id}
-          post={{
-            ...post,
-            author: user,
-          }}
-        />
+        <PostCard key={post.id} post={post} />
       ))}
       {isLoadingMore && (
         <div className="space-y-4">

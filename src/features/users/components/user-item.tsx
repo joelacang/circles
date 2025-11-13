@@ -6,11 +6,9 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { cn } from "@/lib/utils";
-import { useUser } from "@clerk/nextjs";
 import UserAvatar from "./user-avatar";
 import { UserPreview } from "@/features/users/types";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { SIZE } from "@/types/enum";
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
 import { UserNameButton } from "./username-button";
@@ -34,16 +32,6 @@ const UserItem = ({
   user,
   mode,
 }: Props) => {
-  const router = useRouter();
-  const fullName = `${user.firstName} ${user.lastName}`;
-  if (!user) {
-    return (
-      <div>
-        <p>User Not Found!</p>
-      </div>
-    );
-  }
-
   return (
     <Item
       variant={variant}
@@ -86,7 +74,7 @@ const UserItem = ({
         ) : mode === "click" ? (
           <UserNameButton user={user} />
         ) : (
-          <ItemTitle>{fullName}</ItemTitle>
+          <ItemTitle>{user.name}</ItemTitle>
         )}
         {/* <div
           className={cn(

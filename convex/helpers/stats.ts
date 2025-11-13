@@ -4,43 +4,44 @@ import { MutationCtx } from "../_generated/server";
 
 export async function insertStats({
   ctx,
-  clerkId,
+  userId,
 }: {
   ctx: MutationCtx;
-  clerkId: string;
+  userId: Id<"users">;
 }): Promise<Id<"stats">> {
   return await ctx.db.insert("stats", {
-    clerkId,
+    userId,
     followers: 0,
     following: 0,
     posts: 0,
+    unreadNotifs: 0,
   });
 }
 
 export async function updateStats({
   ctx,
-  clerkId,
+  userId,
   mode,
   field,
 }: {
   ctx: MutationCtx;
-  clerkId: string;
-  mode?: "add" | "deduct";
-  field: "posts" | "followers" | "following" | "none";
+  userId: Id<"users">;
+  mode: "add" | "deduct";
+  field: "posts" | "followers" | "following" | "unread" | "none";
 }): Promise<void> {
   let currentStats: Doc<"stats">;
 
   // Fetch existing stats
   const stats = await ctx.db
     .query("stats")
-    .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
+    .withIndex("by_userId", (q) => q.eq("userId", userId))
     .unique();
 
   if (stats) {
     currentStats = stats;
   } else {
     //Insert new data if not found;
-    const newStatId = await insertStats({ ctx, clerkId });
+    const newStatId = await insertStats({ ctx, userId });
     const newStats = await ctx.db.get(newStatId);
 
     if (!newStats) {
@@ -55,9 +56,10 @@ export async function updateStats({
     posts: number;
     followers: number;
     following: number;
+    unreadNotifs: number;
   }> = {};
 
-  if (mode && field !== "none") {
+  if (field !== "none") {
     const increment = mode === "add" ? 1 : -1;
 
     switch (field) {
@@ -76,6 +78,11 @@ export async function updateStats({
           0
         );
         break;
+      case "unread":
+        updateData.unreadNotifs = Math.max(
+          (currentStats.unreadNotifs || 0) + increment,
+          0
+        );
     }
 
     await ctx.db.patch(currentStats._id, updateData);

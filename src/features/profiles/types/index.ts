@@ -1,8 +1,9 @@
+import { UserPreview } from "@/features/users/types";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 export type Profile = {
   id: Id<"profiles">;
-  clerkId: string;
+  user: UserPreview;
   dateOfBirth: number;
   followers: number;
   followings: number;

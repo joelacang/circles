@@ -1,41 +1,132 @@
 import { v } from "convex/values";
-import { action, mutation } from "./_generated/server";
-import { clerkClient } from "../src/features/clerk";
-import { getUserPreview } from "./helpers/users";
+import { action, internalMutation, mutation, query } from "./_generated/server";
+import { getLoggedUser, getUserPreview } from "./helpers/users";
+import { api, internal } from "./_generated/api";
+import { insertStats } from "./helpers/stats";
 
-export const getUserDetails = action({
+export const createUser = mutation({
   args: {
     clerkId: v.string(),
+    name: v.string(),
+    username: v.string(),
+    email: v.string(),
+    imageUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    try {
-      const user = await clerkClient.users.getUser(args.clerkId);
+    console.log(`createUserMutation activated`);
 
-      return getUserPreview(user);
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      throw new Error("Failed to fetch user details");
-    }
+    const { clerkId, name, username, email, imageUrl } = args;
+
+    const existingEmail = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+
+    if (existingEmail)
+      throw new Error("Can't create user. Email is already taken.");
+
+    const existingUsername = await ctx.db
+      .query("users")
+      .withIndex("by_username", (q) => q.eq("username", username))
+      .unique();
+
+    if (existingUsername)
+      throw new Error("Can't create user. Username is already taken.");
+
+    const userId = await ctx.db.insert("users", {
+      clerkId,
+      username,
+      email,
+      imageUrl,
+      name,
+    });
+
+    await insertStats({ ctx, userId });
+
+    return userId;
   },
 });
 
-export const getUserByUsername = action({
+export const updateUserFromWebhook = action({
+  args: {
+    clerkId: v.string(),
+    name: v.string(),
+    username: v.string(),
+    imageUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    await ctx.runMutation(internal.users.updateUser, {
+      clerkId: args.clerkId,
+      name: args.name,
+      username: args.username,
+      imageUrl: args.imageUrl,
+    });
+  },
+});
+
+export const updateUser = internalMutation({
+  args: {
+    clerkId: v.string(),
+    name: v.string(),
+    username: v.string(),
+    imageUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .unique();
+
+    if (!user) throw new Error("User not found.");
+
+    await ctx.db.patch(user._id, {
+      username: args.username,
+      imageUrl: args.imageUrl,
+      name: args.name,
+    });
+  },
+});
+
+export const getLoggedUserQuery = query({
+  handler: async (ctx) => {
+    return await getLoggedUser(ctx);
+  },
+});
+
+export const updateName = mutation({
+  args: {
+    firstName: v.union(v.string(), v.null()),
+    lastName: v.union(v.string(), v.null()),
+    clerkId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (!args.firstName && !args.lastName)
+      throw new Error("Please provide at least a first name or a last name.");
+    const loggedUser = await getLoggedUser(ctx);
+
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+    if (loggedUser.clerkId !== args.clerkId)
+      throw new Error("Unauthorized. clerkId did not match.");
+
+    await ctx.db.patch(loggedUser.id, {
+      name: `${args.firstName ?? ""} ${args.lastName ?? ""}`.trim(),
+    });
+
+    return { success: true };
+  },
+});
+
+export const getUserByUsername = query({
   args: { username: v.string() },
   handler: async (ctx, args) => {
-    try {
-      const users = await clerkClient.users.getUserList({
-        limit: 1,
-        username: [args.username],
-      });
+    const userData = await ctx.db
+      .query("users")
+      .withIndex("by_username", (q) => q.eq("username", args.username))
+      .unique();
 
-      if (users.data.length === 0) return null;
+    if (!userData) return null;
 
-      const user = users.data[0];
-
-      return getUserPreview(user);
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      throw new Error("Failed to fetch user details");
-    }
+    return getUserPreview(userData);
   },
 });

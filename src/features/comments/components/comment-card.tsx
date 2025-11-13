@@ -1,8 +1,7 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import PostActionButton from "@/features/posts/components/post-action-button";
 import UserAvatar from "@/features/users/components/user-avatar";
 import { SIZE } from "@/types/enum";
-import { useUser } from "@clerk/nextjs";
 import { MessageCircleIcon, MoreHorizontalIcon } from "lucide-react";
 import { Comment } from "../types";
 import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
@@ -12,62 +11,32 @@ import { useState } from "react";
 import CommentBox from "./comment-box";
 import RepliesLoader from "./replies-loader";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
 
 interface Props {
   comment: Comment;
   childComment?: boolean;
-  lastChildComment?: boolean;
   level?: number;
 }
-const CommentCard = ({
-  comment,
-  childComment = false,
-  lastChildComment = false,
-  level = 0,
-}: Props) => {
-  const { user: author, loading } = useGetUserDetails(comment.authorId);
+const CommentCard = ({ comment, childComment = false, level = 0 }: Props) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const fullname = `${author?.firstName} ${author?.lastName}`;
 
   return (
     <div>
       <div className="relative">
         <div className="  flex w-full items-start justify-start gap-3">
-          <div>
-            {loading ? (
-              <Skeleton className="size-8 rounded-full" />
-            ) : (
-              <>
-                {author && (
-                  <ProfileHoverCard user={author}>
-                    <UserAvatar imageUrl={author.imageUrl} size={SIZE.MICRO} />
-                  </ProfileHoverCard>
-                )}
-              </>
-            )}
-          </div>
+          <ProfileHoverCard user={comment.author}>
+            <UserAvatar imageUrl={comment.author.imageUrl} size={SIZE.MICRO} />
+          </ProfileHoverCard>
+
           <div className="w-full space-y-2">
             <div className="flex flex-row items-center justify-start gap-2">
-              {loading ? (
-                <Skeleton className="h-5 w-18" />
-              ) : (
-                <>
-                  {author && (
-                    <ProfileHoverCard user={author}>
-                      <Button className="text-sm size-fit p-0" variant="link">
-                        {fullname ?? author?.username}
-                      </Button>
-                    </ProfileHoverCard>
-                  )}
-                </>
-              )}
+              <ProfileHoverCard user={comment.author}>
+                <Button className="text-sm size-fit p-0" variant="link">
+                  {comment.author.username}
+                </Button>
+              </ProfileHoverCard>
 
               <p className="text-xs text-muted-foreground">
                 {formatDistanceToNowStrict(new Date(comment.dateCreated))}

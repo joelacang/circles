@@ -2,8 +2,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -11,36 +9,35 @@ import UserItem from "./user-item";
 import { MenuItem } from "@/features/navigation/types";
 import {
   CheckCircle2Icon,
-  CheckCircleIcon,
   LanguagesIcon,
   LogOutIcon,
   MoonIcon,
   SettingsIcon,
   SunIcon,
   UserIcon,
-  Wifi,
-  XIcon,
 } from "lucide-react";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { useProfileDialog } from "../hooks/use-profile-dialog";
 import MyDropdownMenuItem from "@/components/my-dropdown-menu-item";
 import { languages } from "@/i18n/resources";
-import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/navigation";
 import UserAvatar from "./user-avatar";
 import { cn } from "@/lib/utils";
 import { SIZE } from "@/types/enum";
 import { useTheme } from "next-themes";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { Skeleton } from "@/components/ui/skeleton";
+import UserItemSkeleton from "./user-item-skeleton";
 
 interface Props {
   mode: "default" | "avatar";
 }
 const UserMenu = ({ mode = "default" }: Props) => {
   const { openUserProfile, signOut } = useClerk();
-  const { user } = useUser();
+  const user = useQuery(api.users.getLoggedUserQuery);
   const { t, i18n } = useTranslation();
-  const { onOpen } = useProfileDialog();
   const currentLanguage = i18n.language;
   const router = useRouter();
   const { theme, setTheme } = useTheme();
@@ -95,6 +92,18 @@ const UserMenu = ({ mode = "default" }: Props) => {
       action: () => signOut(),
     },
   ];
+
+  if (user === undefined) {
+    return (
+      <div className="w-full">
+        {mode === "default" ? (
+          <UserItemSkeleton />
+        ) : (
+          <Skeleton className="size-8 rounded-full" />
+        )}
+      </div>
+    );
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -108,14 +117,8 @@ const UserMenu = ({ mode = "default" }: Props) => {
             {mode === "default" ? (
               <UserItem
                 variant="outline"
-                subtitle={user?.username ? `@${user.username}` : ""}
-                user={{
-                  id: user.id,
-                  firstName: user.firstName,
-                  lastName: user.lastName,
-                  username: user.username,
-                  imageUrl: user.imageUrl,
-                }}
+                subtitle={`@${user.username}`}
+                user={user}
               />
             ) : (
               <UserAvatar imageUrl={user.imageUrl} size={SIZE.MICRO} />
@@ -125,18 +128,7 @@ const UserMenu = ({ mode = "default" }: Props) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-72 mx-4 z-[70]">
         <DropdownMenuGroup>
-          {user && (
-            <UserItem
-              user={{
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                username: user.username,
-                imageUrl: user.imageUrl,
-              }}
-              subtitle={user?.username ? `@${user.username}` : ""}
-            />
-          )}
+          {user && <UserItem user={user} subtitle={`@${user.username}`} />}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

@@ -1,8 +1,6 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import LoadingMessage from "@/components/loading-message";
 import { useUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { UserPlusIcon } from "lucide-react";
 import { useProfileDialog } from "@/features/users/hooks/use-profile-dialog";
@@ -15,10 +13,10 @@ interface Props {
   user: UserPreview;
 }
 const ProfileLoader = ({ user }: Props) => {
-  const profile = useQuery(api.profiles.getProfile, { clerkId: user.id });
-  const { user: loggedUser } = useUser();
+  const profile = useQuery(api.profiles.getProfile, { userId: user.id });
+  const { user: clerkUser } = useUser();
   const { onOpen } = useProfileDialog();
-  const ownProfile = loggedUser?.id === user.id;
+  const ownProfile = clerkUser?.id === user.clerkId;
 
   if (profile === undefined) {
     return <ProfileSectionSkeleton />;
@@ -48,7 +46,7 @@ const ProfileLoader = ({ user }: Props) => {
 
   return (
     <div>
-      <ProfileSection profile={profile} user={user} />
+      <ProfileSection profile={profile} />
     </div>
   );
 };

@@ -1,9 +1,10 @@
+import { UserPreview } from "@/features/users/types";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 export type Comment = {
   id: Id<"comments">;
   body: string;
-  authorId: string;
+  author: UserPreview;
   likes: number;
   comments: number;
   postId: Id<"posts">;

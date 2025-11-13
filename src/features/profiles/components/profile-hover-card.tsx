@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/features/users/components/user-avatar";
-import UserItem from "@/features/users/components/user-item";
 import { UserPreview } from "@/features/users/types";
 import { SIZE } from "@/types/enum";
 import ProfileCount from "./profile-count";
@@ -8,7 +7,6 @@ import { User } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import LoadingMessage from "@/components/loading-message";
-import InfoMessage from "@/components/info-message";
 import { useUser } from "@clerk/nextjs";
 import {
   HoverCard,
@@ -22,7 +20,7 @@ interface Props {
   children: React.ReactNode;
 }
 const ProfileHoverCard = ({ user, children }: Props) => {
-  const profile = useQuery(api.profiles.getProfile, { clerkId: user.id });
+  const profile = useQuery(api.profiles.getProfile, { userId: user.id });
   const { user: loggedUser } = useUser();
   const router = useRouter();
 
@@ -38,9 +36,7 @@ const ProfileHoverCard = ({ user, children }: Props) => {
         <div className="flex flex-col gap-2 relative w-full">
           <UserAvatar imageUrl={user.imageUrl} size={SIZE.LARGE} />
           <div className="pt-2">
-            <p className="text-lg font-semibold leading-none">
-              {user.firstName} {user.lastName}
-            </p>
+            <p className="text-lg font-semibold leading-none">{user.name}</p>
             <p className="text-sm text-muted-foreground">@{user.username}</p>
           </div>
           {loggedUser?.id !== user.id && (

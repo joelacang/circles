@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
 import { addNotification } from "./helpers/notifications";
+import { getLoggedUser } from "./helpers/users";
 
 export const likeComment = mutation({
   args: {
@@ -10,13 +11,13 @@ export const likeComment = mutation({
     const comment = await ctx.db.get(args.commentId);
     if (!comment) throw new Error("Comment not found");
 
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const existingLike = await ctx.db
       .query("commentLikes")
       .withIndex("by_likerId_commentId", (q) =>
-        q.eq("likerId", userIdentity.subject).eq("commentId", args.commentId)
+        q.eq("likerId", loggedUser.id).eq("commentId", args.commentId)
       )
       .unique();
 
@@ -24,7 +25,7 @@ export const likeComment = mutation({
 
     const likeId = await ctx.db.insert("commentLikes", {
       commentId: args.commentId,
-      likerId: userIdentity.subject,
+      likerId: loggedUser.id,
     });
 
     await ctx.db.patch(args.commentId, {
@@ -51,13 +52,13 @@ export const unlikeComment = mutation({
     const comment = await ctx.db.get(args.commentId);
     if (!comment) throw new Error("Post Not Found");
 
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const existingLike = await ctx.db
       .query("commentLikes")
       .withIndex("by_likerId_commentId", (q) =>
-        q.eq("likerId", userIdentity.subject).eq("commentId", args.commentId)
+        q.eq("likerId", loggedUser.id).eq("commentId", args.commentId)
       )
       .unique();
 

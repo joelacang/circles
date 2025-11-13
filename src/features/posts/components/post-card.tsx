@@ -11,8 +11,6 @@ import BookmarkPostButton from "./bookmark-post-button";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
-import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
 import { TextProcessor } from "@/lib/text-processor";
 
 interface Props {
@@ -22,9 +20,6 @@ interface Props {
 
 const PostCard = ({ post, detailsPage = false }: Props) => {
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const { user: author, loading: loadingAuthor } = useGetUserDetails(
-    post.authorId
-  );
   const router = useRouter();
 
   return (
@@ -42,14 +37,12 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
         }}
       >
         <div className="flex pr-4 items-center justify-between w-full">
-          {loadingAuthor && <UserItemSkeleton />}
-          {author && !loadingAuthor && (
-            <UserItem
-              user={author}
-              subtitle={`${formatDistanceToNowStrict(new Date(post.dateCreated))} ago`}
-              mode="hover"
-            />
-          )}
+          <UserItem
+            user={post.author}
+            subtitle={`${formatDistanceToNowStrict(new Date(post.dateCreated))} ago`}
+            mode="hover"
+          />
+
           <PostDropdownMenu />
         </div>
 

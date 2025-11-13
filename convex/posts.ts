@@ -1,10 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { AUDIENCE, Audience } from "@/types/enum";
+import { Audience } from "@/types/enum";
 import { paginationOptsValidator } from "convex/server";
 import { Post } from "@/features/posts/types";
-import { getPostData, getPostStatus } from "./helpers/posts";
+import { getPostData } from "./helpers/posts";
 import { updateStats } from "./helpers/stats";
+import { getLoggedUser } from "./helpers/users";
 
 export const create = mutation({
   args: {
@@ -15,15 +16,12 @@ export const create = mutation({
     audience: Audience,
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-
-    if (!userIdentity) throw new Error("Unauthorized. Not logged in.");
-
-    const loggedUserId = userIdentity.subject;
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const postId = await ctx.db.insert("posts", {
       body: args.body,
-      authorId: loggedUserId,
+      authorId: loggedUser.id,
       quotedPostId: args.quotedPostId,
       attachments: args.attachments,
       likes: 0,
@@ -35,7 +33,7 @@ export const create = mutation({
 
     await updateStats({
       ctx,
-      clerkId: loggedUserId,
+      userId: loggedUser.id,
       mode: "add",
       field: "posts",
     });
@@ -46,7 +44,7 @@ export const create = mutation({
 
 export const getUserPosts = query({
   args: {
-    userId: v.string(),
+    userId: v.id("users"),
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {

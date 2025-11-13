@@ -12,4 +12,5 @@ export type MenuItem = {
   subMenus?: MenuItem[];
   children?: React.ReactNode;
   mode?: "default" | "destructive";
+  count?: number;
 };

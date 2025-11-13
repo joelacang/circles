@@ -1,13 +1,11 @@
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
-import { Doc, Id } from "../../../../convex/_generated/dataModel";
+import { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 import { ORDER } from "@/types/enum";
 import CommentCard from "./comment-card";
 import { Comment } from "../types";
-import { Loader2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LoadingMessage from "@/components/loading-message";
-import RepliesLoader from "./replies-loader";
 import CommentSkeleton from "./comment-skeleton";
 
 interface Props {

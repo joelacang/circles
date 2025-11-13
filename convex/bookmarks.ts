@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { getLoggedUser } from "./helpers/users";
 
 export const bookmarkPost = mutation({
   args: {
@@ -10,13 +11,13 @@ export const bookmarkPost = mutation({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post Not Found.");
 
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const existingBookmark = await ctx.db
       .query("bookmarks")
       .withIndex("by_postId_bookmarkerId", (q) =>
-        q.eq("postId", args.postId).eq("bookmarkerId", userIdentity.subject)
+        q.eq("postId", args.postId).eq("bookmarkerId", loggedUser.id)
       )
       .unique();
 
@@ -24,7 +25,7 @@ export const bookmarkPost = mutation({
 
     const bookmarkId = await ctx.db.insert("bookmarks", {
       postId: args.postId,
-      bookmarkerId: userIdentity.subject,
+      bookmarkerId: loggedUser.id,
       folderId: args.folderId,
     });
 
@@ -44,13 +45,13 @@ export const unbookmarkPost = mutation({
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post Not Found.");
 
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) throw new Error("Unauthorized. You are not logged in.");
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const existingBookmark = await ctx.db
       .query("bookmarks")
       .withIndex("by_postId_bookmarkerId", (q) =>
-        q.eq("postId", args.postId).eq("bookmarkerId", userIdentity.subject)
+        q.eq("postId", args.postId).eq("bookmarkerId", loggedUser.id)
       )
       .unique();
 

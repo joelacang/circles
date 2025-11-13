@@ -1,18 +1,22 @@
 import { NOTIF_ACTION } from "@/types/enum";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { LucideIcon } from "lucide-react";
+import { UserPreview } from "@/features/users/types";
 
 export type Notification = {
   id: Id<"notifications">;
   groupDate: string;
-  recipientId: string;
-  senderIds: {
-    dateCreated: number;
-    senderId: string;
-  }[];
-  action: NOTIF_ACTION;
+  recipientType: "author" | "tag" | "mention" | "follow";
+  recipientId: Id<"notificationRecipients">;
+  senders: {
+    details: Sender[];
+    remaining: number;
+  };
+  action: "follow" | "like" | "comment" | "mention" | "quote";
   postId?: Id<"posts">;
   commentId?: Id<"comments">;
+  dateCreated: number;
+  readTime?: number;
 };
 
 export type NotifDisplay = {
@@ -21,4 +25,14 @@ export type NotifDisplay = {
   primaryColor: string;
   darkColor: string;
   label: string;
+};
+
+export type Recipient = {
+  user: UserPreview;
+  type: "author" | "tag" | "mention";
+};
+
+export type Sender = {
+  user: UserPreview;
+  dateSent: number;
 };

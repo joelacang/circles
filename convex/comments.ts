@@ -4,7 +4,12 @@ import { paginationOptsValidator } from "convex/server";
 import { Order } from "@/types/enum";
 import { Comment } from "@/features/comments/types";
 import { getCommentStatus } from "./helpers/comments";
-import { addNotification } from "./helpers/notifications";
+import {
+  addCommentNotification,
+  addNotification,
+  addPostNotification,
+} from "./helpers/notifications";
+import { getLoggedUser, getUser } from "./helpers/users";
 
 export const create = mutation({
   args: {
@@ -13,8 +18,8 @@ export const create = mutation({
     postId: v.id("posts"),
   },
   handler: async (ctx, args) => {
-    const userIdentity = await ctx.auth.getUserIdentity();
-    if (!userIdentity) throw new Error("Unauthorized");
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
     const post = await ctx.db.get(args.postId);
     if (!post) throw new Error("Post not found");
@@ -24,7 +29,7 @@ export const create = mutation({
       body: args.body,
       parentCommentId: args.parentCommentId,
       postId: args.postId,
-      authorId: userIdentity.subject,
+      authorId: loggedUser.id,
       likes: 0,
       comments: 0,
     });
@@ -32,26 +37,25 @@ export const create = mutation({
     //Update Parent Comment Counter
     if (args.parentCommentId) {
       const parentComment = await ctx.db.get(args.parentCommentId);
-
-      if (!parentComment) return;
+      if (!parentComment) throw new Error("Comment not found.");
 
       await ctx.db.patch(args.parentCommentId, {
         comments: (parentComment.comments ?? 0) + 1,
       });
 
-      await addNotification({
-        ctx,
-        recipientId: parentComment.authorId,
-        source: {
-          action: "comment",
-          commentId: parentComment._id,
-        },
-      });
+      if (parentComment.authorId !== post.authorId) {
+        await addCommentNotification({
+          ctx,
+          source: {
+            action: "comment",
+            commentId: parentComment._id,
+          },
+        });
+      }
     }
 
-    await addNotification({
+    await addPostNotification({
       ctx,
-      recipientId: post.authorId,
       source: {
         action: "comment",
         postId: post._id,
@@ -75,6 +79,8 @@ export const getTopLevelComments = query({
   },
   handler: async (ctx, args) => {
     // Build query based on sort order
+    const loggedUser = await getLoggedUser(ctx);
+
     const buildQuery = () => {
       switch (args.order) {
         case "Most Likes":
@@ -105,18 +111,42 @@ export const getTopLevelComments = query({
 
     const results = await buildQuery().paginate(args.paginationOpts);
 
-    const page: Comment[] = await Promise.all(
-      results.page.map(async (comment) => {
-        const { isLiked } = await getCommentStatus(ctx, comment._id);
+    const page: Comment[] = (
+      await Promise.all(
+        results.page.map(async (comment) => {
+          const {
+            _id,
+            body,
+            authorId,
+            likes,
+            comments,
+            postId,
+            parentCommentId,
+            _creationTime,
+          } = comment;
 
-        return {
-          ...comment,
-          id: comment._id,
-          dateCreated: comment._creationTime,
-          isLiked: isLiked,
-        };
-      })
-    );
+          const { isLiked } = await getCommentStatus(ctx, _id);
+          const author =
+            authorId === loggedUser?.id
+              ? loggedUser
+              : await getUser({ ctx, userId: authorId });
+
+          if (!author) return null;
+
+          return {
+            id: _id,
+            body,
+            author,
+            likes,
+            comments,
+            postId,
+            parentCommentId,
+            dateCreated: _creationTime,
+            isLiked,
+          };
+        })
+      )
+    ).filter((p) => p !== null);
 
     return {
       ...results,
@@ -132,6 +162,7 @@ export const getReplies = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
+    const loggedUser = await getLoggedUser(ctx);
     const results = await ctx.db
       .query("comments")
       .withIndex("by_postId_parentCommentId", (q) =>
@@ -140,18 +171,42 @@ export const getReplies = query({
       .order("desc")
       .paginate(args.paginationOpts);
 
-    const page: Comment[] = await Promise.all(
-      results.page.map(async (comment) => {
-        const { isLiked } = await getCommentStatus(ctx, comment._id);
+    const page: Comment[] = (
+      await Promise.all(
+        results.page.map(async (comment) => {
+          const {
+            _id,
+            body,
+            authorId,
+            likes,
+            comments,
+            postId,
+            parentCommentId,
+            _creationTime,
+          } = comment;
 
-        return {
-          ...comment,
-          id: comment._id,
-          dateCreated: comment._creationTime,
-          isLiked: isLiked,
-        };
-      })
-    );
+          const { isLiked } = await getCommentStatus(ctx, _id);
+          const author =
+            loggedUser?.id === authorId
+              ? loggedUser
+              : await getUser({ ctx, userId: authorId });
+
+          if (!author) return null;
+
+          return {
+            id: _id,
+            body,
+            author,
+            likes,
+            comments,
+            postId,
+            parentCommentId,
+            dateCreated: _creationTime,
+            isLiked,
+          };
+        })
+      )
+    ).filter((p) => p !== null);
 
     return {
       ...results,
