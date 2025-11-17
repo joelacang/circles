@@ -9,16 +9,23 @@
  */
 
 import type * as bookmarks from "../bookmarks.js";
+import type * as chatParticipants from "../chatParticipants.js";
+import type * as chats from "../chats.js";
 import type * as commentLikes from "../commentLikes.js";
 import type * as comments from "../comments.js";
 import type * as follows from "../follows.js";
+import type * as helpers_chatParticipants from "../helpers/chatParticipants.js";
+import type * as helpers_chats from "../helpers/chats.js";
 import type * as helpers_comments from "../helpers/comments.js";
 import type * as helpers_follows from "../helpers/follows.js";
+import type * as helpers_messages from "../helpers/messages.js";
 import type * as helpers_notifications from "../helpers/notifications.js";
 import type * as helpers_posts from "../helpers/posts.js";
 import type * as helpers_stats from "../helpers/stats.js";
 import type * as helpers_users from "../helpers/users.js";
 import type * as likes from "../likes.js";
+import type * as messageDrafts from "../messageDrafts.js";
+import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
 import type * as posts from "../posts.js";
 import type * as profiles from "../profiles.js";
@@ -40,16 +47,23 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   bookmarks: typeof bookmarks;
+  chatParticipants: typeof chatParticipants;
+  chats: typeof chats;
   commentLikes: typeof commentLikes;
   comments: typeof comments;
   follows: typeof follows;
+  "helpers/chatParticipants": typeof helpers_chatParticipants;
+  "helpers/chats": typeof helpers_chats;
   "helpers/comments": typeof helpers_comments;
   "helpers/follows": typeof helpers_follows;
+  "helpers/messages": typeof helpers_messages;
   "helpers/notifications": typeof helpers_notifications;
   "helpers/posts": typeof helpers_posts;
   "helpers/stats": typeof helpers_stats;
   "helpers/users": typeof helpers_users;
   likes: typeof likes;
+  messageDrafts: typeof messageDrafts;
+  messages: typeof messages;
   notifications: typeof notifications;
   posts: typeof posts;
   profiles: typeof profiles;

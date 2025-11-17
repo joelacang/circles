@@ -11,9 +11,6 @@ import { useTranslation } from "react-i18next";
 import { getNotificationDisplay } from "../utils";
 import { cn } from "@/lib/utils";
 import React from "react";
-
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
 import UserAvatar from "@/features/users/components/user-avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -21,6 +18,7 @@ import { SIZE } from "@/types/enum";
 import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import { api } from "../../../../convex/_generated/api";
 import { useMutation } from "convex/react";
+import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 
 interface Props {
   notif: Notification;
@@ -34,14 +32,17 @@ const NotificationCard = ({ notif }: Props) => {
   const notifDisplay = getNotificationDisplay({
     action: notif.action,
     mode: notif.postId ? "post" : "comment",
+    userType:
+      notif.recipientType && notif.recipientType !== "follow"
+        ? notif.recipientType
+        : undefined,
   });
-
   const router = useRouter();
 
   return (
     <Item
       className={cn(
-        "hover:bg-accent cursor-pointer  px-2 pt-2 pb-4",
+        "hover:bg-accent cursor-pointer  px-2 pt-2 pb-4 flex items-start justify-between",
         !notif.readTime && "bg-primary/10"
       )}
       onClick={() => {
@@ -68,15 +69,10 @@ const NotificationCard = ({ notif }: Props) => {
       }}
     >
       <ItemMedia className="relative">
-        {notif.senders.details[0] && (
-          <UserAvatar
-            imageUrl={
-              notif.senders.details[0]?.user.imageUrl ??
-              "/images/avatar-placeholder.png"
-            }
-            size={SIZE.SMALL}
-          />
-        )}
+        <UserAvatar
+          imageUrl={notif.senders.details[0]?.user.imageUrl}
+          size={SIZE.SMALL}
+        />
 
         <div
           className={cn(
@@ -93,45 +89,71 @@ const NotificationCard = ({ notif }: Props) => {
           <notifDisplay.icon className="size-3 text-white" />
         </div>
       </ItemMedia>
-      <ItemContent>
-        <ItemTitle>
-          <p>
-            {notif.senders.details.map((s, index) => {
-              const isLast = index === notif.senders.details.length - 1;
-              const isSecondLast = index === notif.senders.details.length - 2;
-              const hasRemaining = notif.senders.remaining > 0;
 
-              if (isLast && hasRemaining) {
-                return (
-                  <span key="others">
-                    {` and ${notif.senders.remaining} others `}
-                  </span>
-                );
-              }
+      <ItemContent className="w-full">
+        <div className="flex flex-row items-start gap-4 w-full">
+          <div className="flex-1">
+            <ItemTitle>
+              <div>
+                {notif.senders.details.map((s, index) => {
+                  const isLast = index === notif.senders.details.length - 1;
+                  const isSecondLast =
+                    index === notif.senders.details.length - 2;
+                  const hasRemaining = notif.senders.remaining > 0;
 
-              return (
-                <span key={s.user.id}>
-                  <Link
-                    href={`/@${s.user.username}`}
-                    className={cn(
-                      buttonVariants({ variant: "link" }),
-                      "size-fit p-0"
-                    )}
-                  >
-                    {s.user.name}
-                  </Link>
-                  {!isLast && (isSecondLast && !hasRemaining ? " and " : ", ")}
-                </span>
-              );
-            })}
-            <span>{` ${notifDisplay.label}`}</span>
-          </p>
-        </ItemTitle>
-        <ItemDescription className="text-xs">{notif.groupDate}</ItemDescription>
+                  if (isLast && hasRemaining) {
+                    return (
+                      <span key="others">
+                        {` ${t("notifications:lastItemSeparator")} ${notif.senders.remaining} ${t("notifications:others")} `}
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <span key={s.user.id}>
+                      <span
+                        className={cn(
+                          buttonVariants({ variant: "link" }),
+                          "size-fit p-0"
+                        )}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.push(`/@${s.user.username}`);
+                        }}
+                      >
+                        {s.user.name}
+                      </span>
+                      {!isLast &&
+                        (isSecondLast && !hasRemaining
+                          ? ` ${t("notifications:lastItemSeparator")} `
+                          : ` ${t("notifications:separator")} `)}
+                    </span>
+                  );
+                })}
+                <span>{` ${notifDisplay.label}${notif.preview ? ":" : "."}`}</span>
+              </div>
+            </ItemTitle>
+            <ItemDescription className="text-xs">
+              {formatDistanceToNowStrict(notif.updateTime)}&nbsp;ago
+            </ItemDescription>
+          </div>
+          <ItemActions className="pt-2">
+            {!notif.readTime && (
+              <div className="size-2 rounded-full bg-primary" />
+            )}
+          </ItemActions>
+        </div>
+        {notif.preview && (
+          <div className="p-2 w-full">
+            <div className="p-4 border rounded-xl">
+              <span className="text-xs italic text-muted-foreground line-clamp-3">
+                {notif.preview}
+              </span>
+            </div>
+          </div>
+        )}
       </ItemContent>
-      <ItemActions>
-        {!notif.readTime && <div className="size-2 rounded-full bg-primary" />}
-      </ItemActions>
     </Item>
   );
 };

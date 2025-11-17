@@ -1,5 +1,6 @@
 "use client";
 
+import MessageDialog from "@/features/chats/components/message-dialog";
 import DocumentDialog from "@/features/docs/components/document-dialog";
 import FollowDialog from "@/features/follow/components/follow-dialog";
 import PostFormDialog from "@/features/posts/components/post-form-dialog";
@@ -21,6 +22,7 @@ const DialogProvider = () => {
       <PostFormDialog />
       <DocumentDialog />
       <FollowDialog />
+      <MessageDialog />
     </>
   );
 };

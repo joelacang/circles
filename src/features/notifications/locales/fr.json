@@ -1,13 +1,32 @@
 {
   "notifications": "Notifications",
   "unreadNotifications": "notifications non lues",
-  "followAction": "vous a suivi.",
-  "likePostAction": "a aimé votre publication.",
-  "commentPostAction": "a commenté votre publication.",
-  "mentionPostAction": "vous a mentionné dans une publication.",
-  "quotePostAction": "a cité votre publication.",
-  "likeCommentAction": "a aimé votre commentaire.",
-  "replyCommentAction": "a répondu à votre commentaire.",
-  "mentionCommentAction": "vous a mentionné dans un commentaire.",
-  "quoteCommentAction": "a cité votre commentaire."
+
+  "followAction": "a commencé à vous suivre",
+
+  "likePostAction": "a aimé votre publication",
+  "likePostTaggedUserAction": "a aimé une publication où vous étiez identifié",
+  "likePostMentionedUserAction": "a aimé une publication où vous étiez mentionné",
+
+  "commentPostAction": "a commenté votre publication",
+  "commentPostTaggedUserAction": "a commenté une publication où vous étiez identifié",
+  "commentPostMentionedUserAction": "a commenté une publication où vous étiez mentionné",
+
+  "mentionPostAction": "vous a mentionné dans une publication",
+
+  "quotePostAction": "a cité votre publication",
+  "quotePostTaggedUserAction": "a cité une publication où vous étiez identifié",
+  "quotePostMentionedUserAction": "a cité une publication où vous étiez mentionné",
+
+  "likeCommentAction": "a aimé votre commentaire",
+  "likeCommentMentionedUserAction": "a aimé un commentaire où vous étiez mentionné",
+
+  "replyCommentAction": "a répondu à votre commentaire",
+  "replyCommentMentionedUserAction": "a répondu à un commentaire où vous étiez mentionné",
+
+  "mentionCommentAction": "vous a mentionné dans un commentaire",
+
+  "separator": ",",
+  "lastItemSeparator": "et",
+  "others": "autres"
 }

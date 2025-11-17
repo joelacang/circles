@@ -1,22 +1,31 @@
-import ConversationSectionCompact from "@/features/messages/components/conversation-section-compact";
-import ConversationsSection from "@/features/messages/components/conversations-section";
+"use client";
+
+import ConversationSectionCompact from "@/features/chats/components/conversation-section-compact";
+import ConversationsLoader from "@/features/chats/components/conversations-loader";
+import ConversationsSection from "@/features/chats/components/conversations-section";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 const MessagesLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="w-full border rounded-xl flex flex-row h-full @container">
-      {/* CONVERSATIONS LISTS SECTION */}
-      <div className={cn(" w-full @xl:w-20 @3xl:w-sm @xl:border-r")}>
-        <div className=" hidden @xl:block @3xl:hidden">
-          <ConversationSectionCompact />
-        </div>
-        <div className="block @xl:hidden @3xl:block">
-          <ConversationsSection />
-        </div>
-      </div>
-      {/* CHAT MESSAGES SECTION */}
+  const params = useParams();
+  const chatIdParams = params.chatId;
+  const isMobile = useIsMobile();
 
-      <div className={cn(" flex-1 w-full hidden @xl:flex")}>{children}</div>
+  return (
+    <div className="w-full border rounded-xl flex flex-row h-full">
+      {/* CONVERSATIONS LISTS SECTION */}
+      <ConversationsLoader />
+
+      {/* CHAT MESSAGES SECTION */}
+      <div
+        className={cn(
+          " flex-1 w-full ",
+          chatIdParams && isMobile ? "flex" : "hidden @xl:flex"
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 };

@@ -1,13 +1,32 @@
 {
   "notifications": "Notificaciones",
-  "unreadNotifications": "notificaciones no leídas",
-  "followAction": "te ha seguido.",
-  "likePostAction": "le ha gustado tu publicación.",
-  "commentPostAction": "ha comentado en tu publicación.",
-  "mentionPostAction": "te ha mencionado en una publicación.",
-  "quotePostAction": "ha citado tu publicación.",
-  "likeCommentAction": "le ha gustado tu comentario.",
-  "replyCommentAction": "ha respondido a tu comentario.",
-  "mentionCommentAction": "te ha mencionado en un comentario.",
-  "quoteCommentAction": "ha citado tu comentario."
+  "unreadNotifications": "notificaciones sin leer",
+
+  "followAction": "te empezó a seguir",
+
+  "likePostAction": "le gustó tu publicación",
+  "likePostTaggedUserAction": "le gustó una publicación en la que fuiste etiquetado",
+  "likePostMentionedUserAction": "le gustó una publicación en la que fuiste mencionado",
+
+  "commentPostAction": "comentó tu publicación",
+  "commentPostTaggedUserAction": "comentó una publicación en la que fuiste etiquetado",
+  "commentPostMentionedUserAction": "comentó una publicación en la que fuiste mencionado",
+
+  "mentionPostAction": "te mencionó en una publicación",
+
+  "quotePostAction": "citó tu publicación",
+  "quotePostTaggedUserAction": "citó una publicación en la que fuiste etiquetado",
+  "quotePostMentionedUserAction": "citó una publicación en la que fuiste mencionado",
+
+  "likeCommentAction": "le gustó tu comentario",
+  "likeCommentMentionedUserAction": "le gustó un comentario en el que fuiste mencionado",
+
+  "replyCommentAction": "respondió a tu comentario",
+  "replyCommentMentionedUserAction": "respondió a un comentario en el que fuiste mencionado",
+
+  "mentionCommentAction": "te mencionó en un comentario",
+
+  "separator": ",",
+  "lastItemSeparator": "y",
+  "others": "otros"
 }

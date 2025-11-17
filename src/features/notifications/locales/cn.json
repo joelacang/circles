@@ -1,13 +1,32 @@
 {
   "notifications": "通知",
   "unreadNotifications": "未读通知",
-  "followAction": "关注了你。",
-  "likePostAction": "点赞了你的帖子。",
-  "commentPostAction": "评论了你的帖子。",
-  "mentionPostAction": "在帖子中提到了你。",
-  "quotePostAction": "引用了你的帖子。",
-  "likeCommentAction": "点赞了你的评论。",
-  "replyCommentAction": "回复了你的评论。",
-  "mentionCommentAction": "在评论中提到了你。",
-  "quoteCommentAction": "引用了你的评论。"
+
+  "followAction": "关注了你",
+
+  "likePostAction": "赞了你的帖子",
+  "likePostTaggedUserAction": "赞了一个你被标记的帖子",
+  "likePostMentionedUserAction": "赞了一个提到你的帖子",
+
+  "commentPostAction": "评论了你的帖子",
+  "commentPostTaggedUserAction": "评论了一个你被标记的帖子",
+  "commentPostMentionedUserAction": "评论了一个提到你的帖子",
+
+  "mentionPostAction": "在帖子中提到了你",
+
+  "quotePostAction": "引用了你的帖子",
+  "quotePostTaggedUserAction": "引用了一个你被标记的帖子",
+  "quotePostMentionedUserAction": "引用了一个提到你的帖子",
+
+  "likeCommentAction": "赞了你的评论",
+  "likeCommentMentionedUserAction": "赞了一个提到你的评论",
+
+  "replyCommentAction": "回复了你的评论",
+  "replyCommentMentionedUserAction": "回复了一个提到你的评论",
+
+  "mentionCommentAction": "在评论中提到了你",
+
+  "separator": "，",
+  "lastItemSeparator": "和其他",
+  "others": "人"
 }

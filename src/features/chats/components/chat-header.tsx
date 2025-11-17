@@ -3,25 +3,34 @@ import {
   Item,
   ItemActions,
   ItemContent,
+  ItemDescription,
+  ItemGroup,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
 import UserAvatar from "@/features/users/components/user-avatar";
 import { SIZE } from "@/types/enum";
 import { MoreVertical } from "lucide-react";
+import { ChatDetail } from "../types";
+import ChatAvatar from "./chat-avatar";
+import { getChatName } from "../utils";
 
-const ChatHeader = () => {
+interface Props {
+  chat: ChatDetail;
+}
+const ChatHeader = ({ chat }: Props) => {
   return (
     <Item className="p-1 w-full">
       <ItemMedia>
-        <UserAvatar
-          imageUrl="/images/avatar-placeholder.png"
-          size={SIZE.SMALL}
-          className="bg-gray-200"
-        />
+        <ChatAvatar chat={chat} />
       </ItemMedia>
       <ItemContent>
-        <ItemTitle>Chat Room Name</ItemTitle>
+        <ItemGroup>
+          <ItemTitle>{getChatName(chat)}</ItemTitle>
+          <ItemDescription>
+            {chat.chat.participantsCount} Participants
+          </ItemDescription>
+        </ItemGroup>
       </ItemContent>
       <ItemActions>
         <Button className="rounded-full" variant="ghost" size="icon">

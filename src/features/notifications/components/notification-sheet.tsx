@@ -9,13 +9,14 @@ import { useNotificationSheet } from "../hooks/use-notification-sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import NotificationSection from "./notification-section";
+import useMedia from "use-media";
 
 const NotificationSheet = () => {
   const { open, unread, onClose } = useNotificationSheet();
-  const isMobile = useIsMobile();
+  const is5xl = useMedia("(min-width:1024px)");
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent side="left" className={cn(isMobile ? "ml-0" : "ml-80")}>
+      <SheetContent side="left" className={cn(is5xl ? "ml-80" : "ml-0")}>
         <SheetHeader>
           <SheetTitle>Notifications</SheetTitle>
           <SheetDescription>

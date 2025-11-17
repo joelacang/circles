@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 export enum SIZE {
   MICRO,
+  MINI,
   SMALL,
   DEFAULT,
   LARGE,

@@ -3,6 +3,8 @@ import { action, internalMutation, mutation, query } from "./_generated/server";
 import { getLoggedUser, getUserPreview } from "./helpers/users";
 import { api, internal } from "./_generated/api";
 import { insertStats } from "./helpers/stats";
+import { paginationOptsValidator } from "convex/server";
+import { UserPreview } from "@/features/users/types";
 
 export const createUser = mutation({
   args: {
@@ -128,5 +130,30 @@ export const getUserByUsername = query({
     if (!userData) return null;
 
     return getUserPreview(userData);
+  },
+});
+
+export const searchUser = query({
+  args: {
+    searchValue: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    const loggedUser = await getLoggedUser(ctx);
+
+    const { searchValue, paginationOpts } = args;
+    const results = await ctx.db
+      .query("users")
+      .withSearchIndex("search_name", (q) => q.search("name", searchValue))
+      .paginate(paginationOpts);
+
+    const userPreviews: UserPreview[] = results.page
+      .map((u) => getUserPreview(u))
+      .filter((u) => u.id !== loggedUser?.id);
+
+    return {
+      ...results,
+      page: userPreviews.slice(0, paginationOpts.numItems),
+    };
   },
 });

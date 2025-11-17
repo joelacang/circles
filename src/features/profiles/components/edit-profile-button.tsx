@@ -13,10 +13,11 @@ const EditProfileButton = ({ profile }: Props) => {
     <Hint tooltip="Edit Profile">
       <Button
         variant="outline"
-        className="hover:text-primary cursor-pointer rounded-full"
+        className="hover:text-primary cursor-pointer size-fit rounded-full p-2.5 border-primary"
         onClick={() => onOpenProfile(profile)}
+        size="icon"
       >
-        <PencilIcon />
+        <PencilIcon className="size-5 text-primary" />
       </Button>
     </Hint>
   );

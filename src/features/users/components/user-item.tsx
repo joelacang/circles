@@ -50,6 +50,7 @@ const UserItem = ({
               }
               imageUrl={user.imageUrl}
               fallback={user.username ?? "U"}
+              className="border border-white"
             />
           </ProfileHoverCard>
         ) : (
@@ -63,6 +64,7 @@ const UserItem = ({
             }
             imageUrl={user.imageUrl}
             fallback={user.username ?? "U"}
+            className="border border-white"
           />
         )}
       </ItemMedia>
@@ -74,7 +76,7 @@ const UserItem = ({
         ) : mode === "click" ? (
           <UserNameButton user={user} />
         ) : (
-          <ItemTitle>{user.name}</ItemTitle>
+          <ItemTitle className="font-semibold">{user.name}</ItemTitle>
         )}
         {/* <div
           className={cn(
@@ -94,9 +96,7 @@ const UserItem = ({
         >{`${user.firstName} ${user.lastName}`}</div> */}
         {titleExt}
 
-        {subtitle && (
-          <ItemDescription className="leading-none">{subtitle}</ItemDescription>
-        )}
+        {subtitle && <p className="leading-none text-xs">{subtitle}</p>}
       </ItemContent>
     </Item>
   );

@@ -2,8 +2,7 @@ import { paginationOptsValidator } from "convex/server";
 import { mutation, query } from "./_generated/server";
 import { Notification, Sender } from "@/features/notifications/types";
 import { v } from "convex/values";
-import { getLoggedUser, getUser, getUserPreview } from "./helpers/users";
-import { success } from "zod";
+import { getLoggedUser, getUserPreview } from "./helpers/users";
 import { updateStats } from "./helpers/stats";
 
 export const getNotifications = query({
@@ -17,7 +16,9 @@ export const getNotifications = query({
 
     const results = await ctx.db
       .query("notificationRecipients")
-      .withIndex("by_recipientId", (q) => q.eq("recipientId", loggedUser.id))
+      .withIndex("by_recipientId_lastUpdateTime", (q) =>
+        q.eq("recipientId", loggedUser.id)
+      )
       .order("desc")
       .paginate(args.paginationOpts);
 
@@ -56,7 +57,8 @@ export const getNotifications = query({
             )
           ).filter((s) => s !== null);
 
-          const { _id, groupDate, _creationTime, source } = notification;
+          const { _id, groupDate, _creationTime, source, preview, updateTime } =
+            notification;
 
           return {
             id: _id,
@@ -72,6 +74,8 @@ export const getNotifications = query({
             commentId: "commentId" in source ? source.commentId : undefined,
             dateCreated: _creationTime,
             readTime: notifRecipient.readTime,
+            updateTime,
+            preview,
           };
         })
       )

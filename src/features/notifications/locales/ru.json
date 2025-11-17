@@ -1,13 +1,32 @@
 {
   "notifications": "Уведомления",
   "unreadNotifications": "непрочитанные уведомления",
-  "followAction": "подписался на вас.",
-  "likePostAction": "понравился ваш пост.",
-  "commentPostAction": "прокомментировал ваш пост.",
-  "mentionPostAction": "упомянул вас в посте.",
-  "quotePostAction": "цитировал ваш пост.",
-  "likeCommentAction": "понравился ваш комментарий.",
-  "replyCommentAction": "ответил на ваш комментарий.",
-  "mentionCommentAction": "упомянул вас в комментарии.",
-  "quoteCommentAction": "цитировал ваш комментарий."
+
+  "followAction": "подписался на вас",
+
+  "likePostAction": "поставил лайк вашей публикации",
+  "likePostTaggedUserAction": "поставил лайк публикации, где вы были отмечены",
+  "likePostMentionedUserAction": "поставил лайк публикации, где вас упомянули",
+
+  "commentPostAction": "прокомментировал вашу публикацию",
+  "commentPostTaggedUserAction": "прокомментировал публикацию, где вы были отмечены",
+  "commentPostMentionedUserAction": "прокомментировал публикацию, где вас упомянули",
+
+  "mentionPostAction": "упомянул вас в публикации",
+
+  "quotePostAction": "процитировал вашу публикацию",
+  "quotePostTaggedUserAction": "процитировал публикацию, где вы были отмечены",
+  "quotePostMentionedUserAction": "процитировал публикацию, где вас упомянули",
+
+  "likeCommentAction": "поставил лайк вашему комментарию",
+  "likeCommentMentionedUserAction": "поставил лайк комментарию, где вас упомянули",
+
+  "replyCommentAction": "ответил на ваш комментарий",
+  "replyCommentMentionedUserAction": "ответил на комментарий, где вас упомянули",
+
+  "mentionCommentAction": "упомянул вас в комментарии",
+
+  "separator": ",",
+  "lastItemSeparator": "и",
+  "others": "других"
 }

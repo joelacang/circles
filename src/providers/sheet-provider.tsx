@@ -1,6 +1,7 @@
 "use client";
 
 import NotificationSheet from "@/features/notifications/components/notification-sheet";
+import SearchSheet from "@/features/search/components/search-sheet";
 import { useEffect, useState } from "react";
 
 const SheetProvider = () => {
@@ -15,6 +16,7 @@ const SheetProvider = () => {
   return (
     <>
       <NotificationSheet />
+      <SearchSheet />
     </>
   );
 };

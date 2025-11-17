@@ -9,6 +9,7 @@ const NotificationSection = () => {
     object,
     Notification
   >(api.notifications.getNotifications, {}, 20);
+
   if (isLoadingFirstPage) {
     return (
       <div className="space-y-2">
@@ -18,9 +19,12 @@ const NotificationSection = () => {
       </div>
     );
   }
+
+  const sortedResults = results.sort((a, b) => b.updateTime - a.updateTime);
+
   return (
     <div className="px-2 space-y-1">
-      {results.map((notif, index) => (
+      {sortedResults.map((notif, index) => (
         <NotificationCard notif={notif} key={notif.id} />
       ))}
     </div>

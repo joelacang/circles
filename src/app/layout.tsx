@@ -7,6 +7,7 @@ import DialogProvider from "@/providers/dialog-provider";
 import { Toaster } from "react-hot-toast";
 import { ThemeProvider } from "@/providers/theme-provider";
 import SheetProvider from "@/providers/sheet-provider";
+import AlertProvider from "@/providers/alert-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -43,6 +44,7 @@ export default function RootLayout({
               <Toaster />
               <DialogProvider />
               <SheetProvider />
+              <AlertProvider />
               {children}
             </ConvexClientProvider>
           </ClerkProvider>

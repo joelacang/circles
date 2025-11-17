@@ -27,7 +27,7 @@ const CommentCard = ({ comment, childComment = false, level = 0 }: Props) => {
       <div className="relative">
         <div className="  flex w-full items-start justify-start gap-3">
           <ProfileHoverCard user={comment.author}>
-            <UserAvatar imageUrl={comment.author.imageUrl} size={SIZE.MICRO} />
+            <UserAvatar imageUrl={comment.author.imageUrl} size={SIZE.MINI} />
           </ProfileHoverCard>
 
           <div className="w-full space-y-2">

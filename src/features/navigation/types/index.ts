@@ -13,4 +13,5 @@ export type MenuItem = {
   children?: React.ReactNode;
   mode?: "default" | "destructive";
   count?: number;
+  highlighted?: boolean;
 };

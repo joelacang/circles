@@ -1,5 +1,5 @@
 import { Doc, Id } from "../_generated/dataModel";
-import { MutationCtx } from "../_generated/server";
+import { MutationCtx, QueryCtx } from "../_generated/server";
 import { format } from "date-fns-tz";
 import { getLoggedUser } from "./users";
 
@@ -12,18 +12,18 @@ export async function addNotification({
   ctx,
   recipients,
   source,
+  preview,
 }: {
   ctx: MutationCtx;
   recipients: RecipientData[];
+  preview?: string;
   source:
     | { action: "like"; postId: Id<"posts"> }
     | { action: "comment"; postId: Id<"posts"> }
-    | { action: "mention"; postId: Id<"posts"> }
     | { action: "quote"; postId: Id<"posts"> }
+    | { action: "reply"; commentId: Id<"comments"> }
     | { action: "follow"; followedUserId: Id<"users"> }
-    | { action: "comment"; commentId: Id<"comments"> }
-    | { action: "like"; commentId: Id<"comments"> }
-    | { action: "mention"; commentId: Id<"comments"> };
+    | { action: "like"; commentId: Id<"comments"> };
 }): Promise<Id<"notifications"> | null> {
   const loggedUser = await getLoggedUser(ctx);
   if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
@@ -31,7 +31,7 @@ export async function addNotification({
   const now = Date.now();
 
   // Use UTC date for consistent grouping
-  const groupDate = format(now, "yyyy-MM-dd", { timeZone: "UTC" });
+  const groupDate = getGroupDate();
 
   //Look for existing notification
   let notification: Doc<"notifications"> | null = null;
@@ -68,37 +68,23 @@ export async function addNotification({
       .unique();
   }
 
-  const notificationId =
-    notification?._id ??
-    (await ctx.db.insert("notifications", { groupDate, source }));
-
-  //Add Recipients
-  await Promise.all(
-    recipients.map(async (recipient) => {
-      if (recipient.id === loggedUser.id) return;
-
-      await addNotifRecipient({
-        ctx,
-        recipient,
-        notificationId,
-      });
-    })
-  );
-
-  //Add Sender
-  const existingSender = await ctx.db
-    .query("notificationSenders")
-    .withIndex("by_notificationId_senderId", (q) =>
-      q.eq("notificationId", notificationId).eq("senderId", loggedUser.id)
-    )
-    .unique();
-
-  if (!existingSender) {
-    await ctx.db.insert("notificationSenders", {
-      notificationId,
-      senderId: loggedUser.id,
+  if (notification) {
+    await ctx.db.patch(notification._id, {
+      updateTime: Date.now(),
     });
   }
+
+  const notificationId =
+    notification?._id ??
+    (await ctx.db.insert("notifications", {
+      groupDate,
+      source,
+      preview,
+      updateTime: Date.now(),
+    }));
+
+  await addRecipients({ ctx, recipients, notificationId });
+  await addSender({ ctx, notificationId });
 
   return notificationId;
 }
@@ -114,11 +100,8 @@ export async function addNotifRecipient({
 }): Promise<Id<"notificationRecipients"> | null> {
   const existing = await ctx.db
     .query("notificationRecipients")
-    .withIndex("by_notificationId_recipientId_type", (q) =>
-      q
-        .eq("notificationId", notificationId)
-        .eq("recipientId", recipient.id)
-        .eq("type", recipient.type)
+    .withIndex("by_notificationId_recipientId", (q) =>
+      q.eq("notificationId", notificationId).eq("recipientId", recipient.id)
     )
     .unique();
 
@@ -127,6 +110,7 @@ export async function addNotifRecipient({
       notificationId,
       recipientId: recipient.id,
       type: recipient.type,
+      updateTime: Date.now(),
     });
 
     //Update Unread Count
@@ -150,12 +134,14 @@ export async function addNotifRecipient({
 export async function addPostNotification({
   ctx,
   source,
+  preview,
 }: {
   ctx: MutationCtx;
   source:
     | { action: "like"; postId: Id<"posts"> }
     | { action: "comment"; postId: Id<"posts"> }
     | { action: "quote"; postId: Id<"posts"> };
+  preview: string;
 }): Promise<Id<"notifications"> | null> {
   const post = await ctx.db.get(source.postId);
   if (!post) throw new Error("Post not found.");
@@ -163,47 +149,41 @@ export async function addPostNotification({
   const loggedUser = await getLoggedUser(ctx);
   if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-  //Get tags and mentions;
-  const taggedUsers: RecipientData[] = (
-    await ctx.db
-      .query("postTags")
-      .withIndex("by_postId", (q) => q.eq("postId", source.postId))
-      .collect()
-  ).map((t) => ({ id: t.taggedUserId, type: "tag" }));
+  const recipients = await getPostRecipients({ ctx, postId: post._id });
+  const groupDate = getGroupDate();
 
-  const mentionedUsers: RecipientData[] = (
-    await ctx.db
-      .query("postMentions")
-      .withIndex("by_postId", (q) => q.eq("postId", source.postId))
-      .collect()
-  ).map((m) => ({ id: m.mentionedUserId, type: "mention" }));
+  if (source.action === "like") {
+    return await addNotification({
+      ctx,
+      recipients,
+      source,
+      preview,
+    });
+  } else {
+    const notificationId = await ctx.db.insert("notifications", {
+      source,
+      groupDate,
+      preview,
+      updateTime: Date.now(),
+    });
 
-  //Avoid duplicates recipient Ids
-  const allRecipients: RecipientData[] = [
-    { type: "author" as const, id: post.authorId },
-    ...taggedUsers,
-    ...mentionedUsers,
-  ];
+    await addRecipients({ ctx, recipients, notificationId });
+    await addSender({ ctx, notificationId });
 
-  const uniqueRecipients = deDupRecipients(allRecipients);
-
-  const notificationId = await addNotification({
-    ctx,
-    recipients: uniqueRecipients,
-    source,
-  });
-  return notificationId;
+    return notificationId;
+  }
 }
 
 export async function addCommentNotification({
   ctx,
   source,
+  preview,
 }: {
   ctx: MutationCtx;
+  preview?: string;
   source:
     | { action: "like"; commentId: Id<"comments"> }
-    | { action: "comment"; commentId: Id<"comments"> }
-    | { action: "mention"; commentId: Id<"comments"> };
+    | { action: "reply"; commentId: Id<"comments"> };
 }): Promise<Id<"notifications"> | null> {
   const comment = await ctx.db.get(source.commentId);
   if (!comment) throw new Error("Comment not found.");
@@ -227,13 +207,73 @@ export async function addCommentNotification({
 
   const uniqueRecipients = deDupRecipients(allRecipients);
 
-  const notificationId = await addNotification({
-    ctx,
-    recipients: uniqueRecipients,
-    source,
-  });
+  if (source.action === "like") {
+    return await addNotification({
+      ctx,
+      recipients: uniqueRecipients,
+      source,
+      preview,
+    });
+  } else {
+  }
+}
 
-  return notificationId;
+export async function getPostRecipients({
+  ctx,
+  postId,
+}: {
+  ctx: QueryCtx;
+  postId: Id<"posts">;
+}): Promise<RecipientData[]> {
+  const post = await ctx.db.get(postId);
+  if (!post) return [];
+
+  const taggedUsers: RecipientData[] = (
+    await ctx.db
+      .query("postTags")
+      .withIndex("by_postId", (q) => q.eq("postId", postId))
+      .collect()
+  ).map((u) => ({ type: "tag", id: u.taggedUserId }));
+
+  const mentionedUsers: RecipientData[] = (
+    await ctx.db
+      .query("postMentions")
+      .withIndex("by_postId", (q) => q.eq("postId", postId))
+      .collect()
+  ).map((u) => ({ type: "mention", id: u.mentionedUserId }));
+
+  const allRecipients: RecipientData[] = [
+    ...taggedUsers,
+    ...mentionedUsers,
+    { type: "author", id: post.authorId },
+  ];
+
+  return deDupRecipients(allRecipients);
+}
+
+export async function getCommentRecipient({
+  ctx,
+  commentId,
+}: {
+  ctx: QueryCtx;
+  commentId: Id<"comments">;
+}): Promise<RecipientData[]> {
+  const comment = await ctx.db.get(commentId);
+  if (!comment) return [];
+
+  const mentionedUsers: RecipientData[] = (
+    await ctx.db
+      .query("commentMentions")
+      .withIndex("by_commentId", (q) => q.eq("commentId", commentId))
+      .collect()
+  ).map((u) => ({ type: "mention", id: u.mentionedUserId }));
+
+  const allRecipients: RecipientData[] = [
+    ...mentionedUsers,
+    { type: "author", id: comment.authorId },
+  ];
+
+  return deDupRecipients(allRecipients);
 }
 
 export function deDupRecipients(recipients: RecipientData[]): RecipientData[] {
@@ -260,4 +300,58 @@ export function deDupRecipients(recipients: RecipientData[]): RecipientData[] {
   }
 
   return Array.from(deduped.values());
+}
+
+export async function addRecipients({
+  ctx,
+  recipients,
+  notificationId,
+}: {
+  ctx: MutationCtx;
+  recipients: RecipientData[];
+  notificationId: Id<"notifications">;
+}): Promise<void> {
+  const loggedUser = await getLoggedUser(ctx);
+  if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+  await Promise.all(
+    recipients.map(async (recipient) => {
+      if (recipient.id === loggedUser.id) return;
+
+      await addNotifRecipient({
+        ctx,
+        recipient,
+        notificationId,
+      });
+    })
+  );
+}
+
+export async function addSender({
+  ctx,
+  notificationId,
+}: {
+  ctx: MutationCtx;
+  notificationId: Id<"notifications">;
+}): Promise<void> {
+  const loggedUser = await getLoggedUser(ctx);
+  if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+  //Add Sender
+  const existingSender = await ctx.db
+    .query("notificationSenders")
+    .withIndex("by_notificationId_senderId", (q) =>
+      q.eq("notificationId", notificationId).eq("senderId", loggedUser.id)
+    )
+    .unique();
+
+  if (!existingSender) {
+    await ctx.db.insert("notificationSenders", {
+      notificationId,
+      senderId: loggedUser.id,
+    });
+  }
+}
+export function getGroupDate(): string {
+  return format(Date.now(), "yyyy-MM-dd", { timeZone: "UTC" });
 }

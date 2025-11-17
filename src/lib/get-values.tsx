@@ -3,6 +3,8 @@ import { SIZE } from "@/types/enum";
 export function getAvatarSize(size: SIZE): string {
   switch (size) {
     case SIZE.MICRO:
+      return "size-6";
+    case SIZE.MINI:
       return "size-8";
     case SIZE.SMALL:
       return "size-10";
@@ -18,6 +20,8 @@ export function getAvatarSize(size: SIZE): string {
 export function getAvatarTextSize(size: SIZE): string {
   switch (size) {
     case SIZE.MICRO:
+      return "text-sm";
+    case SIZE.MINI:
       return "text-lg";
     case SIZE.SMALL:
       return "text-xl";

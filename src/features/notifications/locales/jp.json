@@ -1,13 +1,32 @@
 {
   "notifications": "通知",
   "unreadNotifications": "未読の通知",
-  "followAction": "があなたをフォローしました。",
-  "likePostAction": "があなたの投稿にいいねしました。",
-  "commentPostAction": "があなたの投稿にコメントしました。",
-  "mentionPostAction": "が投稿であなたに言及しました。",
-  "quotePostAction": "があなたの投稿を引用しました。",
-  "likeCommentAction": "があなたのコメントにいいねしました。",
-  "replyCommentAction": "があなたのコメントに返信しました。",
-  "mentionCommentAction": "がコメントであなたに言及しました。",
-  "quoteCommentAction": "があなたのコメントを引用しました。"
+
+  "followAction": "あなたをフォローしました",
+
+  "likePostAction": "あなたの投稿にいいねしました",
+  "likePostTaggedUserAction": "あなたがタグ付けされた投稿にいいねしました",
+  "likePostMentionedUserAction": "あなたが言及された投稿にいいねしました",
+
+  "commentPostAction": "あなたの投稿にコメントしました",
+  "commentPostTaggedUserAction": "あなたがタグ付けされた投稿にコメントしました",
+  "commentPostMentionedUserAction": "あなたが言及された投稿にコメントしました",
+
+  "mentionPostAction": "投稿であなたに言及しました",
+
+  "quotePostAction": "あなたの投稿を引用しました",
+  "quotePostTaggedUserAction": "あなたがタグ付けされた投稿を引用しました",
+  "quotePostMentionedUserAction": "あなたが言及された投稿を引用しました",
+
+  "likeCommentAction": "あなたのコメントにいいねしました",
+  "likeCommentMentionedUserAction": "あなたが言及されたコメントにいいねしました",
+
+  "replyCommentAction": "あなたのコメントに返信しました",
+  "replyCommentMentionedUserAction": "あなたが言及されたコメントに返信しました",
+
+  "mentionCommentAction": "コメントであなたに言及しました",
+
+  "separator": ",",
+  "lastItemSeparator": "とその他",
+  "others": "人"
 }

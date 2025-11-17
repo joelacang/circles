@@ -2,7 +2,7 @@ import UserAvatar from "@/features/users/components/user-avatar";
 import { Profile } from "../types";
 import { UserPreview } from "@/features/users/types";
 import { SIZE } from "@/types/enum";
-import { GlobeIcon } from "lucide-react";
+import { GlobeIcon, Mail, MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ProfileCount from "./profile-count";
 import UserPosts from "@/features/posts/components/user-posts";
@@ -15,6 +15,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import FollowButton from "@/features/follow/components/follow-button";
 import UnfollowButton from "@/features/follow/components/unfollow-button";
 import { useFollowDialog } from "@/features/follow/hooks/use-follow-dialog";
+import { Button } from "@/components/ui/button";
+import Hint from "@/components/hint";
+import ChatUserButton from "@/features/chats/components/chat-user-button";
+import useMedia from "use-media";
 
 interface Props {
   profile: Profile;
@@ -22,7 +26,7 @@ interface Props {
 
 const ProfileSection = ({ profile }: Props) => {
   const { user: loggedUser } = useUser();
-  const isMobile = useIsMobile();
+  const is5xl = useMedia("(min-width:1024px)");
   const { onOpen } = useFollowDialog();
   const isFollowing = useQuery(api.follows.getIsFollowing, {
     userIdToCheck: profile.user.id,
@@ -56,9 +60,9 @@ const ProfileSection = ({ profile }: Props) => {
           <div
             className={cn(
               "flex flex-row ",
-              isMobile
-                ? " items-center justify-center"
-                : "items-start justify-between pt-4"
+              is5xl
+                ? "items-start justify-between pt-4"
+                : " items-center justify-center"
             )}
           >
             <div className="flex flex-col items-center lg:items-start">
@@ -113,11 +117,14 @@ const ProfileSection = ({ profile }: Props) => {
       <div className="py-8 space-y-4">
         <UserPosts userId={profile.user.id} />
       </div>
-      {ownProfile && (
-        <div className={cn("absolute top-8 right-4")}>
+
+      <div className={cn("absolute top-8 right-4 space-x-2")}>
+        {ownProfile ? (
           <EditProfileButton profile={profile} />
-        </div>
-      )}
+        ) : (
+          <ChatUserButton user={profile.user} />
+        )}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -17,6 +18,8 @@ import React, { useEffect, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import FormActionButton from "@/components/form-action-button";
 import { cn } from "@/lib/utils";
+import { CheckIcon, Trash, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ConfirmAlert = () => {
   const {
@@ -27,6 +30,8 @@ const ConfirmAlert = () => {
     isError,
     error,
     onClose,
+    onDestruct,
+    onConfirm,
     onValidate: validate,
     onError: setError,
     onConfirm: confirm,
@@ -61,6 +66,8 @@ const ConfirmAlert = () => {
   };
 
   const handleClose = () => {
+    if (isPending) return;
+
     onClose();
     setCode(null);
   };
@@ -136,16 +143,31 @@ const ConfirmAlert = () => {
           </div>
         )}
         <AlertDialogFooter className="pt-4">
-          <AlertDialogCancel onClick={handleClose}>Cancel</AlertDialogCancel>
-          <FormActionButton
-            mode="delete"
-            isPending={isPending}
+          <AlertDialogCancel onClick={handleClose} disabled={isPending}>
+            {confirmDetails.cancelLabel ?? "Cancel"}
+          </AlertDialogCancel>
+          {confirmDetails.destruct && (
+            <Button variant="outline" onClick={onDestruct}>
+              <X className=" text-destructive" />
+              <span className="text-destructive">
+                {confirmDetails.destructLabel ?? "Discard"}
+              </span>
+            </Button>
+          )}
+          <AlertDialogAction
             disabled={
               isPending ||
               (confirmDetails.enableConfirmation && (code === "" || !code))
             }
-            onClick={handleConfirmation}
-          />
+            onClick={onConfirm}
+          >
+            <CheckIcon />
+            {confirmDetails.actionLabel
+              ? confirmDetails.actionLabel
+              : confirmDetails.mode === "destructive"
+                ? "Delete"
+                : "Confirm"}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

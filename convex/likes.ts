@@ -38,6 +38,7 @@ export const likePost = mutation({
         action: "like",
         postId: post._id,
       },
+      preview: post.body,
     });
     return likeId;
   },

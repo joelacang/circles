@@ -7,17 +7,24 @@ import {
 import { HiUserGroup } from "react-icons/hi2";
 import { MenuItem } from "../types";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CreatePostButton from "@/features/posts/components/create-post-button";
 import { useNotificationSheet } from "@/features/notifications/hooks/use-notification-sheet";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { useSearchSheet } from "@/features/search/hooks/use-search-sheet";
 
 const SidebarContent = () => {
   const { t } = useTranslation();
-  const { onOpen: openNotifications } = useNotificationSheet();
+  const { onOpen: openNotifications, open: notifSheetOpen } =
+    useNotificationSheet();
+  const { onOpen: openSearch, open: searchSheetOpen } = useSearchSheet();
   const router = useRouter();
   const unread = useQuery(api.notifications.getUnreadNotifCount);
+  const pathname = usePathname();
+  const isSheetOpen = notifSheetOpen || searchSheetOpen;
 
   const items: MenuItem[] = [
     {
@@ -25,11 +32,14 @@ const SidebarContent = () => {
       label: t("sidebar:homeMenu"),
       icon: HomeIcon,
       action: () => router.push(`/`),
+      highlighted: pathname === "/" && !isSheetOpen,
     },
     {
       id: "search",
       label: t("sidebar:searchMenu"),
       icon: SearchIcon,
+      action: () => openSearch(),
+      highlighted: searchSheetOpen,
     },
     {
       id: "circles",
@@ -41,6 +51,7 @@ const SidebarContent = () => {
       label: t("sidebar:messagesMenu"),
       icon: MessageCircleIcon,
       action: () => router.push(`/messages`),
+      highlighted: pathname.startsWith("/messages") && !isSheetOpen,
     },
     {
       id: "notifications",
@@ -48,6 +59,7 @@ const SidebarContent = () => {
       icon: BellIcon,
       action: () => openNotifications(unread ?? 0),
       count: unread ?? 0,
+      highlighted: notifSheetOpen,
     },
   ];
   return (
@@ -63,8 +75,19 @@ const SidebarContent = () => {
           }}
         >
           <div className="flex flex-row gap-4 items-center justify-start">
-            {item.icon && <item.icon className="size-4" />}
-            <p className=" text-lg font-semibold">{item.label}</p>
+            {item.icon && (
+              <item.icon
+                className={cn("size-4", item.highlighted && "text-primary")}
+              />
+            )}
+            <p
+              className={cn(
+                " text-lg font-semibold",
+                item.highlighted && "text-primary"
+              )}
+            >
+              {item.label}
+            </p>
           </div>
 
           {item.count && item.count > 0 ? (

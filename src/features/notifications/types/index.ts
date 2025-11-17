@@ -12,11 +12,13 @@ export type Notification = {
     details: Sender[];
     remaining: number;
   };
-  action: "follow" | "like" | "comment" | "mention" | "quote";
+  action: "follow" | "like" | "comment" | "mention" | "quote" | "reply";
   postId?: Id<"posts">;
   commentId?: Id<"comments">;
   dateCreated: number;
   readTime?: number;
+  preview?: string | null;
+  updateTime: number;
 };
 
 export type NotifDisplay = {

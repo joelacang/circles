@@ -15,6 +15,7 @@ export default defineSchema({
     .index("by_username", ["username"])
     .searchIndex("search_name", {
       searchField: "name",
+      filterFields: ["username", "email"],
     })
     .searchIndex("search_username", {
       searchField: "username",
@@ -158,7 +159,7 @@ export default defineSchema({
         postId: v.id("posts"),
       }),
       v.object({
-        action: v.literal("comment"),
+        action: v.literal("reply"),
         commentId: v.id("comments"),
       }),
       v.object({
@@ -174,6 +175,8 @@ export default defineSchema({
         postId: v.id("posts"),
       })
     ),
+    preview: v.optional(v.string()),
+    updateTime: v.number(),
   })
     .index("by_action_groupDate", ["source.action", "groupDate"])
     .index("by_action_postId_date", [
@@ -201,16 +204,13 @@ export default defineSchema({
       v.literal("follow")
     ),
     readTime: v.optional(v.number()),
+    updateTime: v.number(),
   })
     .index("by_notificationId", ["notificationId"])
-    .index("by_recipientId", ["recipientId"])
+    .index("by_recipientId_lastUpdateTime", ["recipientId", "updateTime"])
     .index("by_notificationId_type", ["notificationId", "type"])
     .index("by_recipientId_readTime", ["recipientId", "readTime"])
-    .index("by_notificationId_recipientId_type", [
-      "notificationId",
-      "recipientId",
-      "type",
-    ]),
+    .index("by_notificationId_recipientId", ["notificationId", "recipientId"]),
   notificationSenders: defineTable({
     notificationId: v.id("notifications"),
     senderId: v.id("users"),
@@ -220,19 +220,52 @@ export default defineSchema({
     .index("by_notificationId_senderId", ["notificationId", "senderId"]),
   chats: defineTable({
     name: v.optional(v.string()),
+    code: v.string(),
     description: v.optional(v.string()),
     type: v.union(v.literal("direct"), v.literal("group"), v.literal("custom")),
-    imageUrl: v.optional(v.string()),
-  }).searchIndex("by_name", {
-    searchField: "name",
-  }),
+    creatorId: v.id("users"),
+    latestMessageTime: v.optional(v.number()),
+    latestMessage: v.optional(v.string()),
+    latestMessageSenderId: v.optional(v.id("users")),
+    participantsCount: v.number(),
+  })
+    .searchIndex("by_name", {
+      searchField: "name",
+    })
+    .index("by_code", ["code"]),
   chatParticipants: defineTable({
     chatId: v.id("chats"),
     participantId: v.id("users"),
     lastReadTime: v.optional(v.number()),
     role: v.optional(v.union(v.literal("member"), v.literal("admin"))),
+    typingTime: v.optional(v.number()),
+    unreadMessages: v.number(),
   })
     .index("by_chatId", ["chatId"])
-    .index("by_participantId", ["participantId"])
+    .index("by_participantId_lastReadTime", ["participantId", "lastReadTime"])
     .index("by_chatId_participantId", ["chatId", "participantId"]),
+  messages: defineTable({
+    chatId: v.id("chats"),
+    authorId: v.optional(v.id("users")),
+    body: v.string(),
+    attachments: v.optional(v.array(v.id("_storage"))),
+    lastUpdateTime: v.optional(v.number()),
+    parentMessageId: v.optional(v.id("messages")),
+  })
+    .index("by_chatId_lastUpdateTime", ["chatId", "lastUpdateTime"])
+    .searchIndex("search_body", { searchField: "body" }),
+  messageDrafts: defineTable({
+    authorId: v.id("users"),
+    body: v.string(),
+    attachments: v.optional(v.array(v.id("_storage"))),
+    lastUpdateTime: v.optional(v.number()),
+  })
+    .index("by_authorId_lastUpdateTime", ["authorId", "lastUpdateTime"])
+    .searchIndex("search_body", { searchField: "body" }),
+  messageDraftRecipients: defineTable({
+    messageDraftId: v.id("messageDrafts"),
+    recipientId: v.id("users"),
+  })
+    .index("by_messageDraftId", ["messageDraftId"])
+    .index("by_messageDraftId_recipientId", ["messageDraftId", "recipientId"]),
 });

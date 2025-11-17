@@ -1,13 +1,32 @@
 {
   "notifications": "Notifications",
   "unreadNotifications": "unread notifications",
-  "followAction": "followed you.",
-  "likePostAction": "liked your post.",
-  "commentPostAction": "commented on your post.",
-  "mentionPostAction": "mentioned you on a post.",
-  "quotePostAction": "quoted on your post.",
-  "likeCommentAction": "liked your comment.",
-  "replyCommentAction": "replied on your comment",
-  "mentionCommentAction": "mentioned you on a comment.",
-  "quoteCommentAction": "quoted on your comment"
+
+  "followAction": "followed you",
+
+  "likePostAction": "liked your post",
+  "likePostTaggedUserAction": "liked a post you were tagged in",
+  "likePostMentionedUserAction": "liked a post you were mentioned in",
+
+  "commentPostAction": "commented on your post",
+  "commentPostTaggedUserAction": "commented on a post you were tagged in",
+  "commentPostMentionedUserAction": "commented on a post you were mentioned in",
+
+  "mentionPostAction": "mentioned you in a post",
+
+  "quotePostAction": "quoted your post",
+  "quotePostTaggedUserAction": "quoted a post you were tagged in",
+  "quotePostMentionedUserAction": "quoted a post you were mentioned in",
+
+  "likeCommentAction": "liked your comment",
+  "likeCommentMentionedUserAction": "liked a comment you were mentioned in",
+
+  "replyCommentAction": "replied to your comment",
+  "replyCommentMentionedUserAction": "replied to a comment you were mentioned in",
+
+  "mentionCommentAction": "mentioned you in a comment",
+
+  "separator": ",",
+  "lastItemSeparator": "and",
+  "others": "others"
 }

@@ -19,7 +19,7 @@ const UserAvatar = ({
   return (
     <Avatar className={cn(getAvatarSize(size), className)}>
       <AvatarImage
-        src={imageUrl ?? "/images/avatar-placeholder.jpg"}
+        src={imageUrl ?? "/images/avatar-placeholder.png"}
         className="object-cover"
       />
       {fallback && (

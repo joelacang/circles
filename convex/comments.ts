@@ -47,9 +47,10 @@ export const create = mutation({
         await addCommentNotification({
           ctx,
           source: {
-            action: "comment",
+            action: "reply",
             commentId: parentComment._id,
           },
+          preview: args.body,
         });
       }
     }
@@ -60,6 +61,7 @@ export const create = mutation({
         action: "comment",
         postId: post._id,
       },
+      preview: args.body,
     });
 
     //Update Post Comment Counter

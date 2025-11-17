@@ -25,7 +25,7 @@ const PostLoader = ({ postId }: Props) => {
 
   if (post === undefined) {
     return (
-      <div className="w-full flex flex-col items-center justify-center text-primary py-8">
+      <div className="w-full flex flex-col items-center justify-center text-primary ">
         <PostCardSkeleton />
       </div>
     );
@@ -42,7 +42,7 @@ const PostLoader = ({ postId }: Props) => {
   }
 
   return (
-    <div className="py-8 px-4">
+    <div className=" px-4">
       {post.data && (
         <>
           <PostCard detailsPage post={post.data} />

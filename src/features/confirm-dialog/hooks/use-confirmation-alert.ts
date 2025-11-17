@@ -8,8 +8,10 @@ type ConfirmAlertFormType = {
   mode: "default" | "destructive";
   enableConfirmation: boolean;
   action: () => void;
+  destruct?: () => void;
   actionLabel?: string;
   cancelLabel?: string;
+  destructLabel?: string;
   children?: () => React.ReactNode;
 };
 
@@ -25,6 +27,7 @@ type ConfirmDialogState = {
   onClose: () => void;
   onValidate: (code?: string | null) => boolean;
   onConfirm: () => boolean;
+  onDestruct: () => void;
   onError: (error: string | null) => void;
   onPending: () => void;
   onCompleted: () => void;
@@ -43,7 +46,15 @@ export const useConfirmationAlert = create<ConfirmDialogState>((set) => ({
     const confirmCode = confirmDetails.enableConfirmation
       ? Math.floor(100000 + Math.random() * 900000).toString()
       : null;
-    set({ confirmDetails, open: true, confirmCode });
+    set({
+      confirmDetails,
+      open: true,
+      confirmCode,
+      error: null,
+      isError: false,
+      isPending: false,
+      isCompleted: false,
+    });
   },
   onClose: () =>
     set({
@@ -56,33 +67,62 @@ export const useConfirmationAlert = create<ConfirmDialogState>((set) => ({
       isCompleted: false,
     }),
   onValidate: (code) => {
-    const state = useConfirmationAlert.getState();
+    const state: ConfirmDialogState = useConfirmationAlert.getState();
 
     // Check if confirmation is required and validate code
     if (state.confirmDetails?.enableConfirmation) {
-      if (!code || code !== state.confirmCode) {
-        return false;
-      }
+      return code === state.confirmCode;
     }
 
     return true;
   },
   onConfirm: () => {
-    const state = useConfirmationAlert.getState();
+    const state: ConfirmDialogState = useConfirmationAlert.getState();
+    const action = state.confirmDetails?.action;
 
-    if (!state.confirmDetails?.action) return false;
+    if (!action) return false;
+
+    set({ isPending: true });
 
     try {
-      state.confirmDetails.action();
+      action();
+
+      set({ isPending: false, isCompleted: true, open: false });
 
       return true;
     } catch (error) {
       console.error(error);
       set({
+        isPending: false,
         isError: true,
         error: "An error occurred. Please try again.",
       });
       return false;
+    }
+  },
+  onDestruct: () => {
+    const state: ConfirmDialogState = useConfirmationAlert.getState();
+    const destruct = state.confirmDetails?.destruct;
+
+    if (!destruct) return;
+
+    set({ isPending: true });
+
+    try {
+      destruct();
+
+      set({
+        isPending: false,
+        isCompleted: true,
+        open: false,
+      });
+    } catch (error) {
+      console.error(error);
+      set({
+        isPending: false,
+        isError: true,
+        error: "An error occurred. Please try again.",
+      });
     }
   },
   onError: (error) => set({ isError: true, error }),
