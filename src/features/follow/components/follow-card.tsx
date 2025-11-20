@@ -1,6 +1,5 @@
 import LoadingMessage from "@/components/loading-message";
 import UserItem from "@/features/users/components/user-item";
-import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
@@ -8,28 +7,25 @@ import { CheckCircle2, UserPlus } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import FollowButton from "./follow-button";
 import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 interface Props {
-  userId: string;
+  userId: Id<"users">;
   isLoading?: boolean;
 }
 const FollowCard = ({ userId, isLoading = false }: Props) => {
-  const { user, loading, error } = useGetUserDetails(userId);
+  const user = useQuery(api.users.getUserById, { userId });
   const { user: loggedUser } = useUser();
   const isFollowing = useQuery(api.follows.getIsFollowing, {
     userIdToCheck: userId,
   });
 
-  if (loading || isLoading || isFollowing === undefined) {
+  if (user === undefined || isLoading || isFollowing === undefined) {
     return <UserItemSkeleton />;
   }
 
   if (!user) {
     return <p>User not found.</p>;
-  }
-
-  if (error) {
-    return <p>Error Loading User: {error}</p>;
   }
 
   return (

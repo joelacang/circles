@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 interface Props extends React.ComponentProps<"button"> {
   className?: string;
   tooltip?: string;
+  size?: "sm" | "lg";
 }
-const CloseButton = ({ className, tooltip, ...props }: Props) => {
+const CloseButton = ({ className, tooltip, size = "sm", ...props }: Props) => {
   return (
     <Hint tooltip={tooltip ?? "Close"}>
       <Button
@@ -20,7 +21,12 @@ const CloseButton = ({ className, tooltip, ...props }: Props) => {
         variant="ghost"
         {...props}
       >
-        <X className="size-4 text-destructive" />
+        <X
+          className={cn(
+            " text-destructive",
+            size === "sm" ? "size-4" : "size-5"
+          )}
+        />
       </Button>
     </Hint>
   );

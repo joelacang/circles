@@ -9,8 +9,9 @@ import {
 import { sendMessage } from "./helpers/messages";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
-import { getAllChatParticipants } from "./helpers/chatParticipants";
+import { getParticipantData } from "./helpers/chatParticipants";
 import { Message } from "@/features/chats/types";
+import { getAllMessageReactCounts } from "./helpers/messageReactions";
 
 export const sendCustomMessage = mutation({
   args: {
@@ -78,14 +79,11 @@ export const getChatMessages = query({
     const loggedUser = await getLoggedUser(ctx);
     if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-    const allParticipants = await getAllChatParticipants({
+    const isLoggedUserParticipant = await getParticipantData({
       ctx,
+      userId: loggedUser.id,
       chatId: args.chatId,
     });
-
-    const participantMap = new Map(allParticipants.map((p) => [p.id, p]));
-
-    const isLoggedUserParticipant = participantMap.get(loggedUser.id);
 
     if (!isLoggedUserParticipant)
       throw new Error("You are not a participant of this chat.");
@@ -96,22 +94,55 @@ export const getChatMessages = query({
       .order("desc")
       .paginate(args.paginationOpts);
 
-    const messages: Message[] = results.page.map((msg) => {
-      const { _id, _creationTime, authorId, ...others } = msg;
+    const messages: Message[] = await Promise.all(
+      results.page.map(async (msg) => {
+        const { _id, _creationTime, authorId, ...others } = msg;
 
-      const author = authorId ? participantMap.get(authorId) : null;
+        const reacts = await getAllMessageReactCounts({
+          ctx,
+          messageId: msg._id,
+        });
 
-      return {
-        ...others,
-        id: _id,
-        author: author ?? null,
-        dateCreated: _creationTime,
-      } satisfies Message;
-    });
+        return {
+          ...others,
+          id: _id,
+          authorId: authorId ?? null,
+          dateCreated: _creationTime,
+          reacts,
+        } satisfies Message;
+      })
+    );
 
     return {
       ...results,
       page: messages,
     };
+  },
+});
+
+export const sendChatMessage = mutation({
+  args: {
+    chatId: v.id("chats"),
+    body: v.string(),
+    parentMessageId: v.optional(v.id("messages")),
+  },
+  handler: async (ctx, args) => {
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+    const { chatId, body, parentMessageId } = args;
+
+    const participantData = await getParticipantData({
+      ctx,
+      userId: loggedUser.id,
+      chatId,
+    });
+
+    if (!participantData)
+      throw new Error("You are not a participant of this chat.");
+
+    const messageId = await sendMessage({ ctx, chatId, body, parentMessageId });
+
+    return messageId;
   },
 });

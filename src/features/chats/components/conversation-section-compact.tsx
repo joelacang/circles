@@ -1,6 +1,5 @@
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
-import UserAvatar from "@/features/users/components/user-avatar";
 import { Plus, Search } from "lucide-react";
 import { ChatDetail } from "../types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { getChatName } from "../utils";
 import ChatAvatar from "./chat-avatar";
+import AddNewMessageButton from "./add-new-message-button";
 
 interface Props {
   isLoading?: boolean;
@@ -22,14 +22,11 @@ const ConversationSectionCompact = ({ isLoading, chats }: Props) => {
   return (
     <div className="flex flex-col items-center justify-center gap-4 p-4">
       <div className="space-y-2  flex flex-col items-center justify-center">
-        <Hint tooltip="Add Conversation">
-          <Button className="size-10 rounded-full">
-            <Plus className="size-6" />
-          </Button>
-        </Hint>
+        <AddNewMessageButton />
+
         <Hint tooltip="Search Conversation">
-          <Button className="size-10 rounded-full">
-            <Search className="size-6" />
+          <Button className="rounded-full" size="icon" variant="ghost">
+            <Search className="text-primary" />
           </Button>
         </Hint>
       </div>
@@ -44,7 +41,6 @@ const ConversationSectionCompact = ({ isLoading, chats }: Props) => {
         ) : (
           <div className="flex flex-col items-center justify-center gap-4">
             {chats.map((chat) => {
-              const isDirect = chat.type === "direct";
               const selected = chat.chat.id === chatIdParams;
 
               return (

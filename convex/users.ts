@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { action, internalMutation, mutation, query } from "./_generated/server";
-import { getLoggedUser, getUserPreview } from "./helpers/users";
+import { getLoggedUser, getUser, getUserPreview } from "./helpers/users";
 import { api, internal } from "./_generated/api";
 import { insertStats } from "./helpers/stats";
 import { paginationOptsValidator } from "convex/server";
@@ -155,5 +155,13 @@ export const searchUser = query({
       ...results,
       page: userPreviews.slice(0, paginationOpts.numItems),
     };
+  },
+});
+
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const { userId } = args;
+    return await getUser({ ctx, userId });
   },
 });

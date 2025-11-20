@@ -251,6 +251,8 @@ export default defineSchema({
     attachments: v.optional(v.array(v.id("_storage"))),
     lastUpdateTime: v.optional(v.number()),
     parentMessageId: v.optional(v.id("messages")),
+    forwardedMessageId: v.optional(v.id("messages")),
+    deletionTime: v.optional(v.number()),
   })
     .index("by_chatId_lastUpdateTime", ["chatId", "lastUpdateTime"])
     .searchIndex("search_body", { searchField: "body" }),
@@ -262,6 +264,20 @@ export default defineSchema({
   })
     .index("by_authorId_lastUpdateTime", ["authorId", "lastUpdateTime"])
     .searchIndex("search_body", { searchField: "body" }),
+  messageReactions: defineTable({
+    messageId: v.id("messages"),
+    reactorId: v.id("users"),
+    emojiNative: v.string(),
+    emojiCode: v.string(),
+  })
+    .index("by_messageId", ["messageId"])
+    .index("by_messageId_reactorId_emojiCode", [
+      "messageId",
+      "reactorId",
+      "emojiCode",
+    ])
+    .index("by_messageId_reactorId", ["messageId", "reactorId"])
+    .index("by_messageId_emojiCode", ["messageId", "emojiCode"]),
   messageDraftRecipients: defineTable({
     messageDraftId: v.id("messageDrafts"),
     recipientId: v.id("users"),

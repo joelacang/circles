@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAddNewMessageDialog } from "../hooks/use-add-message-dialog";
 import { Button } from "@/components/ui/button";
-import { MailPlus, Send } from "lucide-react";
+import { Loader2, MailPlus, Send } from "lucide-react";
 import { useConfirmationAlert } from "@/features/confirm-dialog/hooks/use-confirmation-alert";
 import MessageDialogForm from "./message-dialog-form";
 import { useMutation } from "convex/react";
@@ -39,8 +39,11 @@ const MessageDialog = () => {
   const sendMessageFn = useMutation(api.messages.sendCustomMessage);
   const { mutate: sendMessage } = useConvexMutationHandler(sendMessageFn);
 
+  const isLoading = addMessagePending || confirmAlertPending;
+  const noRecipients = !draft?.recipients || draft.recipients.length < 1;
+
   const handleSave = () => {
-    if (!draft) return;
+    if (!draft || noRecipients) return;
 
     const { body, recipients } = draft;
 
@@ -164,7 +167,7 @@ const MessageDialog = () => {
     <Dialog
       open={open}
       onOpenChange={() => {
-        if (addMessagePending || confirmAlertPending) return;
+        if (isLoading) return;
 
         handleConfirm();
       }}
@@ -178,12 +181,9 @@ const MessageDialog = () => {
         </DialogHeader>
         <MessageDialogForm />
         <DialogFooter>
-          <Button
-            onClick={handleSend}
-            disabled={addMessagePending || confirmAlertPending}
-          >
-            <Send />
-            Send
+          <Button onClick={handleSend} disabled={isLoading || noRecipients}>
+            {isLoading ? <Loader2 className="animate-spin" /> : <Send />}
+            {isLoading ? "Sending..." : "Send"}
           </Button>
         </DialogFooter>
       </DialogContent>

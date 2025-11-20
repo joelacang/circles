@@ -1,6 +1,11 @@
-import z from "zod";
-
-export const convexId = (table: string) =>
-  z
-    .string()
-    .regex(new RegExp(`^${table}_[a-zA-Z0-9]+$`), `Invalid ${table} ID`);
+export function mergeRefs<T>(...refs: (React.Ref<T> | undefined)[]) {
+  return (value: T) => {
+    refs.forEach((ref) => {
+      if (typeof ref === "function") {
+        ref(value);
+      } else if (ref && "current" in ref) {
+        ref.current = value;
+      }
+    });
+  };
+}

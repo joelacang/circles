@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { MessageDraft } from "../types";
+import { Message, MessageDraft } from "../types";
 import { UserPreview } from "@/features/users/types";
 import { Id } from "../../../../convex/_generated/dataModel";
 
@@ -7,8 +7,13 @@ type AddNewMessageDialogState = {
   open: boolean;
   pending: boolean;
   draft: MessageDraft | null;
+  message: Message | null;
+  messageToReply: Message | null;
   onOpenDraft: (draft: MessageDraft) => void;
+  onOpenForwardMsg: (message: Message) => void;
   onAddRecipient: (recipient: UserPreview) => void;
+  onReplyMessage: (message: Message) => void;
+  onRemoveReply: () => void;
   onRemoveRecipient: (recipientId: Id<"users">) => void;
   onChangeRecipients: (recipients: UserPreview[]) => void;
   onEditBody: (body: string) => void;
@@ -25,7 +30,15 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
     open: false,
     pending: false,
     draft: null,
+    message: null,
+    messageToReply: null,
     onOpenDraft: (draft) => set({ open: true, draft }),
+    onOpenForwardMsg: (message) =>
+      set({
+        open: true,
+        message: message,
+        draft: { body: "", recipients: [] },
+      }),
     onAddRecipient: (recipient) => {
       const state = useAddNewMessageDialog.getState();
 
@@ -42,6 +55,8 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
         });
       }
     },
+    onReplyMessage: (message) => set({ messageToReply: message }),
+    onRemoveReply: () => set({ messageToReply: null }),
     onRemoveRecipient: (recipientId) => {
       const state = useAddNewMessageDialog.getState();
 
@@ -95,9 +110,15 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
         },
       });
     },
-    onClear: () => set({ draft: { body: "", recipients: [] } }),
+    onClear: () =>
+      set({
+        draft: { body: "", recipients: [] },
+        message: null,
+        messageToReply: null,
+      }),
     onOpen: () => set({ open: true, draft: { recipients: [], body: "" } }),
-    onClose: () => set({ open: false, draft: null }),
+    onClose: () =>
+      set({ open: false, draft: null, message: null, messageToReply: null }),
     onPending: () => set({ pending: true }),
     onCompleted: () => set({ pending: false }),
   })

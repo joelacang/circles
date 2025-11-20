@@ -3,10 +3,14 @@ import { Doc, Id } from "../_generated/dataModel";
 import { QueryCtx } from "../_generated/server";
 
 export function getUserPreview(user: Doc<"users">): UserPreview {
+  const { _id, clerkId, name, username, imageUrl } = user;
   return {
-    ...user,
-    id: user._id,
-  };
+    id: _id,
+    clerkId,
+    name,
+    username,
+    imageUrl,
+  } satisfies UserPreview;
 }
 
 export async function getLoggedUser(

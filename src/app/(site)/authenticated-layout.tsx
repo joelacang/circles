@@ -32,9 +32,11 @@ const AuthenticatedLayoutPage = ({
 
   if (results === undefined) {
     return (
-      <div className="flex w-full h-screen flex-col items-center justify-center ">
-        <Loader2 className="animate-spin" />
-        <p>Loading Account...</p>
+      <div className=" w-full h-screen ">
+        <div className="flex flex-col items-center justify-center gap-3 ">
+          <Loader2 className="animate-spin" />
+          <p>Loading Account...</p>
+        </div>
       </div>
     );
   }
@@ -51,13 +53,14 @@ const AuthenticatedLayoutPage = ({
 
       <div
         className={cn(
-          "flex flex-1 items-start justify-center w-full overflow-y-auto h-full  pt-16 @5xl:pt-4 pb-4"
+          "flex flex-1 items-start justify-center w-full overflow-y-auto h-full   @5xl:pt-4  @5xl:pb-4",
+          pathname.startsWith(`/messages`) ? "pt-12" : "pt-16"
         )}
       >
         <div
           className={cn(
             "w-full h-full",
-            !pathname.startsWith(`/messages`) ? "max-w-3xl " : "px-4"
+            !pathname.startsWith(`/messages`) ? "max-w-3xl " : "p-0 @5xl:px-4"
           )}
         >
           {children}

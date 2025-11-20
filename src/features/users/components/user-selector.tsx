@@ -46,6 +46,8 @@ const UserSelector = ({ onChangeUserSelection }: Props) => {
     if (!existing) {
       setSelectedUsers((prev) => [...prev, recipient]);
     }
+    setOpen(false);
+    setSearchValue("");
   };
 
   const handleRemoveRecipient = (recipientId: Id<"users">) => {
@@ -80,7 +82,7 @@ const UserSelector = ({ onChangeUserSelection }: Props) => {
           </InputGroupAddon>
         )}
 
-        <div className="flex flex-row items-center justify-between w-full py-1">
+        <div className="flex flex-row w-full items-center justify-between py-1">
           <InputGroupInput
             className="py-2 flex-1"
             placeholder="Enter name to search"

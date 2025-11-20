@@ -35,7 +35,7 @@ const UserItem = ({
   return (
     <Item
       variant={variant}
-      className={cn("w-full", size === "sm" ? "p-2" : "p-3", className)}
+      className={cn("w-full", size === "sm" ? "p-1 gap-3" : "p-3", className)}
     >
       <ItemMedia>
         {mode === "hover" ? (
@@ -96,7 +96,16 @@ const UserItem = ({
         >{`${user.firstName} ${user.lastName}`}</div> */}
         {titleExt}
 
-        {subtitle && <p className="leading-none text-xs">{subtitle}</p>}
+        {subtitle && (
+          <p
+            className={cn(
+              "leading-none text-xs ",
+              size === "sm" && "line-clamp-1"
+            )}
+          >
+            {subtitle}
+          </p>
+        )}
       </ItemContent>
     </Item>
   );

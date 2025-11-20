@@ -16,7 +16,6 @@ const FollowDialog = () => {
   if (!data) return null;
 
   const { user, mode, count } = data;
-  const name = `${user.firstName} ${user.lastName}`;
 
   return (
     <Dialog
@@ -34,10 +33,10 @@ const FollowDialog = () => {
           </DialogTitle>
           <DialogDescription>
             {mode === "followers"
-              ? `${name} currently has ${count} follower${count !== 1 ? "s" : ""}.`
+              ? `${user.name} currently has ${count} follower${count !== 1 ? "s" : ""}.`
               : count > 0
-                ? `${name} currently follows ${count} people.`
-                : `${name} is not following anybody.`}
+                ? `${user.name} currently follows ${count} people.`
+                : `${user.name} is not following anybody.`}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">

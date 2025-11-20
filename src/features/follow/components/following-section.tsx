@@ -1,9 +1,10 @@
 import { api } from "../../../../convex/_generated/api";
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import FollowCard from "./follow-card";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 interface Props {
-  userId: string;
+  userId: Id<"users">;
 }
 
 const FollowingSection = ({ userId }: Props) => {
@@ -15,7 +16,7 @@ const FollowingSection = ({ userId }: Props) => {
   return (
     <div>
       {results.map((r) => (
-        <FollowCard isLoading={isLoadingFirstPage} userId={r} key={r} />
+        <FollowCard isLoading={isLoadingFirstPage} userId={userId} key={r} />
       ))}
     </div>
   );

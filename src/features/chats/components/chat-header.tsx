@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/item";
 import UserAvatar from "@/features/users/components/user-avatar";
 import { SIZE } from "@/types/enum";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, PanelRightOpen, Sidebar } from "lucide-react";
 import { ChatDetail } from "../types";
 import ChatAvatar from "./chat-avatar";
 import { getChatName } from "../utils";
@@ -34,7 +34,7 @@ const ChatHeader = ({ chat }: Props) => {
       </ItemContent>
       <ItemActions>
         <Button className="rounded-full" variant="ghost" size="icon">
-          <MoreVertical className="size-5" />
+          <PanelRightOpen className=" size-5 text-primary" />
         </Button>
       </ItemActions>
     </Item>
