@@ -2,18 +2,21 @@ import { create } from "zustand";
 import { Message, MessageDraft } from "../types";
 import { UserPreview } from "@/features/users/types";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { searchUser } from "../../../../convex/users";
 
 type AddNewMessageDialogState = {
   open: boolean;
   pending: boolean;
   draft: MessageDraft | null;
   message: Message | null;
-  messageToReply: Message | null;
-  onOpenDraft: (draft: MessageDraft) => void;
-  onOpenForwardMsg: (message: Message) => void;
+  searchUsers: boolean;
+  onOpenDraft: (draft: MessageDraft, searchUsers?: boolean) => void;
+  onOpenWithRecipients: (
+    recipients: UserPreview[],
+    searchUsers?: boolean
+  ) => void;
+  onOpenForwardMsg: (message: Message, searchUsers?: boolean) => void;
   onAddRecipient: (recipient: UserPreview) => void;
-  onReplyMessage: (message: Message) => void;
-  onRemoveReply: () => void;
   onRemoveRecipient: (recipientId: Id<"users">) => void;
   onChangeRecipients: (recipients: UserPreview[]) => void;
   onEditBody: (body: string) => void;
@@ -31,13 +34,21 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
     pending: false,
     draft: null,
     message: null,
-    messageToReply: null,
-    onOpenDraft: (draft) => set({ open: true, draft }),
-    onOpenForwardMsg: (message) =>
+    searchUsers: false,
+    onOpenDraft: (draft, searchUsers) =>
+      set({ open: true, draft, searchUsers: searchUsers ?? false }),
+    onOpenWithRecipients: (recipients, searchUsers) =>
+      set({
+        open: true,
+        draft: { recipients, body: "" },
+        searchUsers: searchUsers ?? false,
+      }),
+    onOpenForwardMsg: (message, searchUsers) =>
       set({
         open: true,
         message: message,
         draft: { body: "", recipients: [] },
+        searchUsers: searchUsers ?? false,
       }),
     onAddRecipient: (recipient) => {
       const state = useAddNewMessageDialog.getState();
@@ -55,8 +66,6 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
         });
       }
     },
-    onReplyMessage: (message) => set({ messageToReply: message }),
-    onRemoveReply: () => set({ messageToReply: null }),
     onRemoveRecipient: (recipientId) => {
       const state = useAddNewMessageDialog.getState();
 
@@ -114,11 +123,14 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
       set({
         draft: { body: "", recipients: [] },
         message: null,
-        messageToReply: null,
       }),
-    onOpen: () => set({ open: true, draft: { recipients: [], body: "" } }),
-    onClose: () =>
-      set({ open: false, draft: null, message: null, messageToReply: null }),
+    onOpen: () =>
+      set({
+        open: true,
+        draft: { recipients: [], body: "" },
+        searchUsers: true,
+      }),
+    onClose: () => set({ open: false, draft: null, message: null }),
     onPending: () => set({ pending: true }),
     onCompleted: () => set({ pending: false }),
   })

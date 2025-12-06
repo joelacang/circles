@@ -38,13 +38,15 @@ export type ChatDetail = DirectChat | CustomChat;
 
 export type Message = {
   id: Id<"messages">;
-  authorId: Id<"users"> | null;
+  authorId?: Id<"users">;
   body: string;
   dateCreated: number;
   lastUpdateTime?: number;
   parentMessageId?: Id<"messages">;
   chatId: Id<"chats">;
   reacts: EmojiGroupCount[];
+  forwardedMessageId?: Id<"messages">;
+  dateDeleted?: number;
 };
 
 export type MessageReactGroup = {

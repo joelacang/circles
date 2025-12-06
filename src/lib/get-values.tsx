@@ -33,3 +33,9 @@ export function getAvatarTextSize(size: SIZE): string {
       return "text-6xl";
   }
 }
+
+export const bgGradientPrimary =
+  "bg-gradient-to-b from-purple-400 via-purple-500 to-purple-600";
+
+export const bgGradientSecondary =
+  "bg-gradient-to-b from-rose-400 via-rose-500 to-rose-600";

@@ -4,6 +4,7 @@ import InfoMessage from "@/components/info-message";
 import ChatLoader from "@/features/chats/components/chat-loader";
 import { useParams } from "next/navigation";
 import { Id } from "../../../../../convex/_generated/dataModel";
+import ChatProvider from "@/providers/chat-provider";
 
 const ChatRoomPage = () => {
   const params = useParams();
@@ -18,7 +19,15 @@ const ChatRoomPage = () => {
     );
   }
 
-  return <ChatLoader chatId={chatId as Id<"chats">} />;
+  return (
+    <div className="w-full">
+      {chatId && (
+        <ChatProvider chatId={chatId as Id<"chats">}>
+          <ChatLoader />
+        </ChatProvider>
+      )}
+    </div>
+  );
 };
 
 export default ChatRoomPage;

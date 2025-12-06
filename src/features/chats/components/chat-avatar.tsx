@@ -3,6 +3,7 @@ import { ChatDetail } from "../types";
 import { SIZE } from "@/types/enum";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import UnreadBadge from "@/components/unread-badge";
 
 interface Props {
   chat: ChatDetail;
@@ -34,9 +35,7 @@ const ChatAvatar = ({ chat, showBadge = false }: Props) => {
       )}
       {chat.chat.unreadCount > 0 && showBadge && (
         <div className="absolute -top-2 -right-2">
-          <Badge className=" rounded-full bg-gradient-to-br from-rose-400 to-rose-600 text-xs font-semibold z-20">
-            {chat.chat.unreadCount}
-          </Badge>
+          <UnreadBadge count={chat.chat.unreadCount} mode="secondary" />
         </div>
       )}
     </div>

@@ -25,6 +25,7 @@ import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import toast from "react-hot-toast";
 import ToastMessage from "@/components/toast-message";
 import { MODE } from "@/types/enum";
+import { bgGradientPrimary } from "@/lib/get-values";
 
 interface Props {
   selected?: boolean;
@@ -77,7 +78,7 @@ const ConversationCard = ({ chat, selected = false }: Props) => {
       className={cn(
         " w-full group p-2 cursor-pointer hover:bg-accent hover:text-accent-foreground",
         selected
-          ? "bg-gradient-to-b from-purple-400  to-purple-600 shadow-lg"
+          ? `shadow-lg ${bgGradientPrimary}`
           : unread
             ? "bg-primary/10"
             : "bg-transparent"

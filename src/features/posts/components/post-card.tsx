@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { TextProcessor } from "@/lib/text-processor";
+import Image from "next/image";
 
 interface Props {
   post: Post;
@@ -52,16 +53,13 @@ const PostCard = ({ post, detailsPage = false }: Props) => {
         </div>
 
         {/* Attachments */}
-        {/* <div className="flex flex-row gap-4 w-full overflow-x-auto p-2">
-        <div className="h-64 aspect-[] relative">
-          <Image
-            src="/images/pic1.jpg"
-            fill
-            alt="Image1"
-            className="object-cover"
-          />
+        <div className="flex flex-row gap-4 w-full overflow-x-auto p-2">
+          {post.attachments?.map((a) => (
+            <div className="w-full aspect-video relative" key={a.id}>
+              <Image src={a.url} fill alt="Image1" className="object-cover" />
+            </div>
+          ))}
         </div>
-      </div> */}
 
         {/* Footer */}
         <div>

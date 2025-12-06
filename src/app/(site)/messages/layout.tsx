@@ -5,6 +5,7 @@ import ConversationsLoader from "@/features/chats/components/conversations-loade
 import ConversationsSection from "@/features/chats/components/conversations-section";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import ChatProvider from "@/providers/chat-provider";
 import { useParams } from "next/navigation";
 
 const MessagesLayout = ({ children }: { children: React.ReactNode }) => {

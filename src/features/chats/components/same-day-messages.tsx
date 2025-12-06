@@ -1,30 +1,13 @@
 import { useLoggedUser } from "@/features/users/hooks/use-logged-user";
-import { Id } from "../../../../convex/_generated/dataModel";
-import { ChatDetail, Message } from "../types";
+
+import { Message } from "../types";
 import ChatMessage from "./chat-message";
 
 interface Props {
   messages: Message[];
-  chat: ChatDetail;
 }
-const SameDayMessages = ({ messages, chat }: Props) => {
+const SameDayMessages = ({ messages }: Props) => {
   const { loggedUser } = useLoggedUser();
-
-  const getAuthor = (authorId: Id<"users">) => {
-    if (authorId === loggedUser?.id) return loggedUser;
-
-    if (chat.type === "direct") {
-      if (chat.participant.id === authorId) return chat.participant;
-
-      return null;
-    }
-
-    if (chat.type === "custom") {
-      return chat.participants.find((u) => u.id === authorId) ?? null;
-    }
-
-    return null;
-  };
 
   return (
     <div className="flex flex-col-reverse">
@@ -51,11 +34,10 @@ const SameDayMessages = ({ messages, chat }: Props) => {
         }
 
         return (
-          <div key={msg.id}>
+          <div key={msg.id} id={msg.id}>
             <ChatMessage
               mode={msg.authorId === loggedUser?.id ? "sender" : "receiver"}
               messageType={groupPosition}
-              author={currentAuthorId ? getAuthor(currentAuthorId) : null}
               message={msg}
             />
           </div>

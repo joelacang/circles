@@ -1,76 +1,85 @@
 import { cn } from "@/lib/utils";
 import {
-  ArrowLeft,
   ChevronDownCircle,
   ChevronUpCircle,
-  MailPlus,
   MessageCircle,
 } from "lucide-react";
-
 import ChatHeader from "./chat-header";
-import ChatMessages from "./chat-messages";
-import ChatInput from "./chat-input";
 import { useChatBar } from "../hooks/use-chat-bar";
-import ConversationList from "./conversation-list";
-import { Button } from "@/components/ui/button";
-import ConversationsLoader from "./conversations-loader";
 import ChatFloatingListLoader from "./chat-floating-list-loader";
 import { useUser } from "@clerk/nextjs";
-import Hint from "@/components/hint";
 import AddNewMessageButton from "./add-new-message-button";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import ChatProvider from "../../../providers/chat-provider";
+import ChatFloatingRoom from "./chat-floating-room";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useCounts } from "@/providers/counts-provider";
+import UnreadBadge from "@/components/unread-badge";
+import { bgGradientPrimary } from "@/lib/get-values";
 
 const ChatFloatingBar = () => {
-  const { open, onToggleOpen, mode, room, onReturn } = useChatBar();
+  const { open, onToggleOpen, mode, room, onReturn, onClose } = useChatBar();
   const { user } = useUser();
+  const pathname = usePathname();
+  const { unreadMsgs } = useCounts();
+  useEffect(() => {
+    if (!pathname.startsWith(`/messages`)) {
+      onClose();
+    }
+  }, [pathname, onClose]);
+  const isMsgsUnread = unreadMsgs > 0 && !open;
 
   return (
     <div
       className={cn(
-        "fixed bottom-0 right-4 w-sm border bg-card rounded-t-2xl shadow-xl  transition-all duration-300 overflow-hidden"
+        "fixed bottom-0 right-4 w-md border  rounded-t-2xl shadow-xl bg-card  transition-all duration-300 overflow-hidden"
       )}
     >
       {/* Header */}
       <div
         className={cn(
-          "cursor-pointer flex items-center justify-between h-16 p-2",
-          open && "border-b"
+          "cursor-pointer flex items-center justify-between",
+          open && "border-b",
+          mode === "list" && isMsgsUnread ? bgGradientPrimary : "bg-card"
         )}
         onClick={() => onToggleOpen()}
       >
         {room ? (
-          <div className="flex flex-row items-center justify-start gap-2 w-full ">
-            {open ? (
-              <Button
-                size="icon"
-                className="rounded-full text-primary border-primary"
-                variant="outline"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onReturn();
-                }}
-              >
-                <ArrowLeft />
-              </Button>
-            ) : null}
-
-            <ChatHeader
-              title={room.participant.name ?? "No Name"}
-              subtitle={`@${room.participant.username}`}
-              avatarUrl={room.participant.imageUrl}
-            />
-          </div>
+          <ChatHeader chat={room} />
         ) : (
-          <div className="flex flex-row items-center justify-start gap-2 px-2 text-primary">
+          <div
+            className={cn(
+              "flex flex-row items-center justify-start gap-2 p-4",
+              isMsgsUnread ? "text-primary-foreground" : "text-primary"
+            )}
+          >
             <MessageCircle className="size-5" />
             <p className="font-semibold text-lg">Messages</p>
+            <div className="pl-4">
+              {isMsgsUnread && (
+                <UnreadBadge count={unreadMsgs} mode="secondary" />
+              )}
+            </div>
           </div>
         )}
-        <div className=" flex flex-row items-center justify-end gap-2">
+        <div className=" flex flex-row items-center justify-end gap-2 p-4">
           {mode === "list" && open && <AddNewMessageButton />}
           {open ? (
-            <ChevronDownCircle className="size-6 text-primary" />
+            <ChevronDownCircle
+              className={cn(
+                "size-6 ",
+                isMsgsUnread ? "text-primary-foreground" : "text-primary"
+              )}
+            />
           ) : (
-            <ChevronUpCircle className="size-6 text-primary" />
+            <ChevronUpCircle
+              className={cn(
+                "size-6",
+                isMsgsUnread ? "text-primary-foreground" : "text-primary"
+              )}
+            />
           )}
         </div>
       </div>
@@ -82,15 +91,10 @@ const ChatFloatingBar = () => {
           open ? "h-[60vh] opacity-100 " : "h-0 p-0 opacity-0"
         )}
       >
-        {mode === "room" ? (
-          <>
-            <div className="overflow-y-auto px-3 pt-4 h-[calc(60vh-78px)]">
-              <ChatMessages />
-            </div>
-            <div className="h-fit pt-1 px-2 pb-2">
-              <ChatInput />
-            </div>
-          </>
+        {mode === "room" && room ? (
+          <ChatProvider chatId={room.chat.id}>
+            <ChatFloatingRoom />
+          </ChatProvider>
         ) : (
           <div className="overflow-y-auto">
             {user && (

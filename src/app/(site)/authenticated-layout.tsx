@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import CountsProvider from "@/providers/counts-provider";
 
 const AuthenticatedLayoutPage = ({
   children,
@@ -42,36 +43,38 @@ const AuthenticatedLayoutPage = ({
   }
 
   return (
-    <div className="flex relative w-full flex-row h-screen @container">
-      <div className="block @5xl:hidden bg-background/95 supports-[backdrop-filter]:bg-background/60 py-2 px-4 absolute top-0 z-20 border-b backdrop-blur w-full">
-        <TopNavbar />
-      </div>
+    <CountsProvider>
+      <div className="flex relative w-full flex-row h-screen @container">
+        <div className="block @5xl:hidden bg-background/95 supports-[backdrop-filter]:bg-background/60 py-2 px-4 absolute top-0 z-20 border-b backdrop-blur w-full">
+          <TopNavbar />
+        </div>
 
-      <div className="w-xs hidden @5xl:block border-r z-50">
-        <Sidebar />
-      </div>
+        <div className="w-xs hidden @5xl:block border-r z-50">
+          <Sidebar />
+        </div>
 
-      <div
-        className={cn(
-          "flex flex-1 items-start justify-center w-full overflow-y-auto h-full   @5xl:pt-4  @5xl:pb-4",
-          pathname.startsWith(`/messages`) ? "pt-12" : "pt-16"
-        )}
-      >
         <div
           className={cn(
-            "w-full h-full",
-            !pathname.startsWith(`/messages`) ? "max-w-3xl " : "p-0 @5xl:px-4"
+            "flex flex-1 items-start justify-center w-full overflow-y-auto h-full   @5xl:pt-4  @5xl:pb-4",
+            pathname.startsWith(`/messages`) ? "pt-12" : "pt-16"
           )}
         >
-          {children}
+          <div
+            className={cn(
+              "w-full h-full",
+              !pathname.startsWith(`/messages`) ? "max-w-3xl " : "p-0 @5xl:px-4"
+            )}
+          >
+            {children}
+          </div>
         </div>
+        {!pathname.startsWith("/messages") && !isMobile && loggedUser && (
+          <div className="absolute bottom-0 right-4">
+            <ChatFloatingBar />
+          </div>
+        )}
       </div>
-      {!pathname.startsWith("/messages") && !isMobile && loggedUser && (
-        <div className="absolute bottom-0 right-4">
-          <ChatFloatingBar />
-        </div>
-      )}
-    </div>
+    </CountsProvider>
   );
 };
 

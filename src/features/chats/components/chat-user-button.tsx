@@ -11,55 +11,20 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ToastMessage from "@/components/toast-message";
 import { MODE } from "@/types/enum";
+import { useAddNewMessageDialog } from "../hooks/use-add-message-dialog";
 
 interface Props {
   user: UserPreview;
 }
 const ChatUserButton = ({ user }: Props) => {
-  const getDirectChatFn = useMutation(api.chats.getDirectChat);
-  const { mutate: getChat, isLoading: isGettingChat } =
-    useConvexMutationHandler(getDirectChatFn);
-  const { onOpenChat } = useChatBar();
-  const isMobile = useIsMobile();
-  const router = useRouter();
-
-  const onGetDirectChat = () => {
-    if (!isMobile) {
-      getChat(
-        { participantId: user.id },
-        {
-          onSuccess: (response) => {
-            if (response) {
-              onOpenChat(response);
-            } else {
-              toast.custom(() => (
-                <ToastMessage message="Chat Room Not Found" mode={MODE.ERROR} />
-              ));
-            }
-          },
-          onError: (error) => {
-            toast.custom(() => (
-              <ToastMessage
-                message="Error Loading Chat"
-                description={error}
-                mode={MODE.ERROR}
-              />
-            ));
-          },
-        }
-      );
-    } else {
-      router.push(`/messages/kals34sdafads`);
-    }
-  };
+  const { onOpenWithRecipients } = useAddNewMessageDialog();
   return (
     <Hint tooltip={`Message @${user.username}`}>
       <Button
         className="rounded-full size-fit p-2.5 border-primary"
         size="icon"
         variant="outline"
-        disabled={isGettingChat}
-        onClick={onGetDirectChat}
+        onClick={() => onOpenWithRecipients([user], false)}
       >
         <MessageCircle className="size-5 text-primary" />
       </Button>

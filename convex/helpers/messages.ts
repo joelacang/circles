@@ -1,6 +1,9 @@
+import { Message } from "@/features/chats/types";
 import { Id } from "../_generated/dataModel";
-import { MutationCtx } from "../_generated/server";
+import { MutationCtx, QueryCtx } from "../_generated/server";
 import { getLoggedUser } from "./users";
+import { getAllEmojiReactions } from "../messageReactions";
+import { getAllMessageReactCounts } from "./messageReactions";
 
 export async function sendMessage({
   ctx,
@@ -44,4 +47,28 @@ export async function sendMessage({
   );
 
   return messageId;
+}
+
+export async function getMessage({
+  ctx,
+  messageId,
+}: {
+  ctx: QueryCtx;
+  messageId: Id<"messages">;
+}) {
+  const message = await ctx.db.get(messageId);
+
+  if (!message) return null;
+
+  const { _id, _creationTime, deletionTime, ...others } = message;
+
+  const reacts = await getAllMessageReactCounts({ ctx, messageId });
+
+  return {
+    ...others,
+    id: _id,
+    dateCreated: _creationTime,
+    dateDeleted: deletionTime,
+    reacts,
+  } satisfies Message;
 }

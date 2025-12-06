@@ -6,7 +6,7 @@ import {
   createDirectChat,
   getChatCode,
 } from "./helpers/chats";
-import { sendMessage } from "./helpers/messages";
+import { getMessage, sendMessage } from "./helpers/messages";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 import { getParticipantData } from "./helpers/chatParticipants";
@@ -17,12 +17,25 @@ export const sendCustomMessage = mutation({
   args: {
     recipientIds: v.array(v.id("users")),
     body: v.string(),
+    attachments: v.array(
+      v.object({
+        storageId: v.id("_storage"),
+        details: v.optional(
+          v.object({
+            width: v.optional(v.number()),
+            height: v.optional(v.number()),
+            size: v.optional(v.number()),
+            type: v.optional(v.string()),
+          })
+        ),
+      })
+    ),
   },
   handler: async (ctx, args) => {
     const loggedUser = await getLoggedUser(ctx);
     if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-    const { recipientIds, body } = args;
+    const { recipientIds, body, attachments } = args;
 
     //sort recipients, check duplicates
     const allSortedParticipants = Array.from(
@@ -69,6 +82,29 @@ export const sendCustomMessage = mutation({
       body,
     });
 
+    if (messageId && attachments.length > 0) {
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          const { storageId, details } = attachment;
+
+          const attachmentId = await ctx.db.insert("attachments", {
+            storageId,
+            uploaderId: loggedUser.id,
+            height: details?.height,
+            width: details?.width,
+            size: details?.size,
+            type: details?.type,
+          });
+
+          await ctx.db.insert("messageAttachments", {
+            messageId,
+            attachmentId,
+            uploaderId: loggedUser.id,
+          });
+        })
+      );
+    }
+
     return messageId;
   },
 });
@@ -96,7 +132,7 @@ export const getChatMessages = query({
 
     const messages: Message[] = await Promise.all(
       results.page.map(async (msg) => {
-        const { _id, _creationTime, authorId, ...others } = msg;
+        const { _id, _creationTime, authorId, deletionTime, ...others } = msg;
 
         const reacts = await getAllMessageReactCounts({
           ctx,
@@ -106,8 +142,9 @@ export const getChatMessages = query({
         return {
           ...others,
           id: _id,
-          authorId: authorId ?? null,
+          authorId,
           dateCreated: _creationTime,
+          dateDeleted: deletionTime,
           reacts,
         } satisfies Message;
       })
@@ -125,12 +162,25 @@ export const sendChatMessage = mutation({
     chatId: v.id("chats"),
     body: v.string(),
     parentMessageId: v.optional(v.id("messages")),
+    attachments: v.array(
+      v.object({
+        storageId: v.id("_storage"),
+        details: v.optional(
+          v.object({
+            width: v.optional(v.number()),
+            height: v.optional(v.number()),
+            size: v.optional(v.number()),
+            type: v.optional(v.string()),
+          })
+        ),
+      })
+    ),
   },
   handler: async (ctx, args) => {
     const loggedUser = await getLoggedUser(ctx);
     if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
 
-    const { chatId, body, parentMessageId } = args;
+    const { chatId, body, parentMessageId, attachments } = args;
 
     const participantData = await getParticipantData({
       ctx,
@@ -143,6 +193,79 @@ export const sendChatMessage = mutation({
 
     const messageId = await sendMessage({ ctx, chatId, body, parentMessageId });
 
+    if (messageId && attachments.length > 0) {
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          const { storageId, details } = attachment;
+
+          const attachmentId = await ctx.db.insert("attachments", {
+            storageId,
+            uploaderId: loggedUser.id,
+            height: details?.height,
+            width: details?.width,
+            size: details?.size,
+            type: details?.type,
+          });
+
+          await ctx.db.insert("messageAttachments", {
+            messageId,
+            attachmentId,
+            uploaderId: loggedUser.id,
+          });
+        })
+      );
+    }
+
     return messageId;
+  },
+});
+
+export const getMessageByID = query({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    return await getMessage({ ctx, messageId: args.messageId });
+  },
+});
+
+export const deleteMessageById = mutation({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+    const message = await ctx.db.get(args.messageId);
+
+    if (message?._id !== args.messageId) throw new Error("Invalid message Id.");
+
+    if (message.authorId !== loggedUser.id)
+      throw new Error("You are not allowed to delete this message.");
+
+    await ctx.db.patch(message._id, {
+      deletionTime: Date.now(),
+    });
+
+    return { success: true };
+  },
+});
+
+export const getUnreadMessagesCount = query({
+  args: {},
+  handler: async (ctx, args) => {
+    const loggedUser = await getLoggedUser(ctx);
+    if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+    const chatsParticipated = await ctx.db
+      .query("chatParticipants")
+      .withIndex("by_participantId_lastReadTime", (q) =>
+        q.eq("participantId", loggedUser.id)
+      )
+      .collect();
+
+    const unreadCount = chatsParticipated.reduce(
+      (a, { unreadMessages: b }) => a + b,
+      0
+    );
+
+    return unreadCount;
   },
 });

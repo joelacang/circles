@@ -51,7 +51,6 @@ export default defineSchema({
     body: v.string(),
     authorId: v.id("users"),
     quotedPostId: v.optional(v.id("posts")),
-    attachments: v.optional(v.array(v.id("_storage"))),
     //groupId: v.optional(v.id("groups")),
     likes: v.number(),
     comments: v.number(),
@@ -63,6 +62,14 @@ export default defineSchema({
     .index("by_quotedPostId", ["quotedPostId"]),
   //.index("by_groupId", ["groupId"])
   //.index("by_groupId_authorId", ["groupId", "authorId"]),
+  postAttachments: defineTable({
+    postId: v.id("posts"),
+    uploaderId: v.id("users"),
+    attachmentId: v.id("attachments"),
+  })
+    .index("by_postId", ["postId"])
+    .index("by_attachmentId", ["attachmentId"])
+    .index("by_uploaderId", ["uploaderId"]),
   postTags: defineTable({
     postId: v.id("posts"),
     taggedUserId: v.id("users"),
@@ -248,7 +255,6 @@ export default defineSchema({
     chatId: v.id("chats"),
     authorId: v.optional(v.id("users")),
     body: v.string(),
-    attachments: v.optional(v.array(v.id("_storage"))),
     lastUpdateTime: v.optional(v.number()),
     parentMessageId: v.optional(v.id("messages")),
     forwardedMessageId: v.optional(v.id("messages")),
@@ -256,6 +262,14 @@ export default defineSchema({
   })
     .index("by_chatId_lastUpdateTime", ["chatId", "lastUpdateTime"])
     .searchIndex("search_body", { searchField: "body" }),
+  messageAttachments: defineTable({
+    messageId: v.id("messages"),
+    uploaderId: v.id("users"),
+    attachmentId: v.id("attachments"),
+  })
+    .index("by_messageId", ["messageId"])
+    .index("by_attachmentId", ["attachmentId"])
+    .index("by_uploaderId", ["uploaderId"]),
   messageDrafts: defineTable({
     authorId: v.id("users"),
     body: v.string(),
@@ -284,4 +298,12 @@ export default defineSchema({
   })
     .index("by_messageDraftId", ["messageDraftId"])
     .index("by_messageDraftId_recipientId", ["messageDraftId", "recipientId"]),
+  attachments: defineTable({
+    storageId: v.id("_storage"),
+    type: v.optional(v.string()),
+    height: v.optional(v.number()),
+    width: v.optional(v.number()),
+    size: v.optional(v.number()),
+    uploaderId: v.id("users"),
+  }).index("by_uploaderId", ["uploaderId"]),
 });

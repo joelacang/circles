@@ -160,8 +160,12 @@ const ConfirmAlert = () => {
               (confirmDetails.enableConfirmation && (code === "" || !code))
             }
             onClick={onConfirm}
+            className={cn(
+              confirmDetails.mode === "destructive" &&
+                "bg-destructive hover:bg-destructive"
+            )}
           >
-            <CheckIcon />
+            {confirmDetails.mode === "destructive" ? <Trash /> : <CheckIcon />}
             {confirmDetails.actionLabel
               ? confirmDetails.actionLabel
               : confirmDetails.mode === "destructive"

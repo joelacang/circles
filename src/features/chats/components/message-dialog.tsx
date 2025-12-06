@@ -140,7 +140,7 @@ const MessageDialog = () => {
   };
 
   const handleConfirm = () => {
-    if (draft?.body.trim() !== "" || draft?.recipients.length > 0) {
+    if (draft?.body.trim() !== "") {
       openConfirmation({
         title: "Save your message?",
         message:

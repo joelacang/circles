@@ -86,13 +86,7 @@ const MessagePreviewCard = ({
       <UserItem
         user={user}
         size="sm"
-        subtitle={
-          minimize
-            ? message.body +
-              "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Animi porro corrupti iste cupiditate quod, est labore sapiente enim placeat fuga magni dignissimos error asperiores! Aliquam voluptates eveniet inventore quis optio."
-            : format(message.dateCreated, "Pp")
-        }
-        className={cn(minimize && "max-w-sm")}
+        subtitle={minimize ? message.body : format(message.dateCreated, "Pp")}
       />
       {!minimize && (
         <div className="p-2">

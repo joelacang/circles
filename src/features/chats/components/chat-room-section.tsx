@@ -1,29 +1,28 @@
 "use client";
-import { useIsMobile } from "@/hooks/use-mobile";
-import ChatHeader from "./chat-header";
+
 import ChatInput from "./chat-input";
 import ChatMessages from "./chat-messages";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Mail, MailPlus } from "lucide-react";
-import Hint from "@/components/hint";
-import { useRouter } from "next/navigation";
 import { ChatDetail } from "../types";
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { useChatBar } from "../hooks/use-chat-bar";
+import { bgGradientPrimary } from "@/lib/get-values";
+import { useChat } from "@/providers/chat-provider";
 
 interface Props {
   chat: ChatDetail;
 }
 
 const ChatRoomSection = ({ chat }: Props) => {
-  const isMobile = useIsMobile();
-  const router = useRouter();
   const [showNewMsgBtn, setShowNewMsgBtn] = useState(false);
   const [scrollToBottom, setScrollToBottom] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const readChat = useMutation(api.chats.readChat);
+  const { open: floatChatOpen, mode } = useChatBar();
+  const usingFloatChat = floatChatOpen && mode === "room";
 
   const handleScrolledToBottom = () => {
     setScrollToBottom(false);
@@ -38,39 +37,15 @@ const ChatRoomSection = ({ chat }: Props) => {
   };
 
   return (
-    <div className="w-full  h-full">
-      {/* HEADER */}
-      <div className="border-b flex flex-row items-center justify-start p-2 gap-2">
-        {isMobile && (
-          <Hint tooltip="Back to Messages">
-            <Button
-              size="icon"
-              variant="outline"
-              className="rounded-full border-primary"
-              onClick={() => {
-                router.push(`/messages`);
-              }}
-            >
-              <ArrowLeft className="text-primary" />
-            </Button>
-          </Hint>
-        )}
-        <ChatHeader chat={chat} />
-      </div>
-
+    <div className="w-full h-full">
       {/* MESSAGES */}
-      <div
-        className={cn(
-          "h-[calc(100vh-228px)] @5xl:h-[calc(100vh-184px)] overflow-y-auto relative"
-        )}
-      >
+      <div className={cn("overflow-y-auto h-full relative")}>
         <ChatMessages
           chat={chat}
           onShowNewMessage={() => setShowNewMsgBtn(true)}
           scrollToBottom={scrollToBottom}
           onScrolledToBottom={handleScrolledToBottom}
         />
-
         {showNewMsgBtn && (
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <Button

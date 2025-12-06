@@ -1,14 +1,11 @@
-import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/features/users/components/user-avatar";
-import { cn } from "@/lib/utils";
-import { AUDIENCE, SIZE } from "@/types/enum";
+import { AUDIENCE, MODE, SIZE } from "@/types/enum";
 import { useUser } from "@clerk/nextjs";
 import { Loader2Icon, WandIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { Id } from "../../../../convex/_generated/dataModel";
 import toast from "react-hot-toast";
 import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import { usePostFormDialog } from "../hooks/use-post-form-dialog";
@@ -22,31 +19,92 @@ import {
 import { FaUsers } from "react-icons/fa";
 import { DialogFooter } from "@/components/ui/dialog";
 import InputTextareaGroup from "@/components/input-textarea-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { LocalFile } from "@/features/attachments/types";
+import { useUploadFiles } from "@/features/attachments/hooks/use-upload-files";
+import ToastMessage from "@/components/toast-message";
+import { Id } from "../../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 const PostForm = () => {
   const { user } = useUser();
   const { t } = useTranslation();
   const { onClose } = usePostFormDialog();
-  const { mutate: createPost, isLoading } = useConvexMutationHandler(
-    useMutation(api.posts.create)
-  );
+  const { mutate: createPost, isLoading: creatingPost } =
+    useConvexMutationHandler(useMutation(api.posts.create));
   const [body, setBody] = useState("");
-  const [attachments, setAttachments] = useState<Id<"_storage">[]>([]);
+  const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [audience, setAudience] = useState<AUDIENCE>(AUDIENCE.PUBLIC);
+  const { uploadFiles, uploading, error: uploadError } = useUploadFiles();
+  const isLoading = creatingPost || uploading;
+  const router = useRouter();
+
+  const handleLocalFileChange = (files: LocalFile[]) => {
+    setLocalFiles(files);
+  };
 
   const onSubmit = async () => {
+    let storageIds: Id<"_storage">[] = [];
+
+    if (localFiles.length > 0) {
+      const filesToBeUploaded = localFiles.map((f) => f.file);
+
+      toast.custom(
+        () => <ToastMessage mode={MODE.LOADING} message="Uploading Files..." />,
+        { id: "uploading-files-toast" }
+      );
+
+      const { success, uploadedIds } = await uploadFiles(filesToBeUploaded);
+
+      toast.dismiss("uploading-files-toast");
+
+      if (!success) {
+        if (uploadError) {
+          toast.custom(() => (
+            <ToastMessage
+              message="Error uploading files"
+              description={uploadError}
+              mode={MODE.ERROR}
+            />
+          ));
+        }
+
+        return;
+      }
+
+      storageIds = uploadedIds;
+    }
+
     createPost(
       {
         body,
         audience,
-        attachments,
+        storageIds,
       },
       {
-        onLoading: () =>
-          toast.loading("Creating Post...", { id: "createPostToast" }),
+        onLoading: () => {
+          toast.custom(
+            () => (
+              <ToastMessage message="Creating Post..." mode={MODE.LOADING} />
+            ),
+            { id: "create-post-toast" }
+          );
+        },
         onSuccess: (response) => {
-          toast.success(`Post created successfully.`);
+          toast.custom(() => (
+            <ToastMessage
+              message="Post Created Successfully."
+              mode={MODE.SUCCESS}
+              footer={
+                <Button
+                  onClick={() => router.push(`/posts/${response.postId}`)}
+                  size="sm"
+                >
+                  View Post
+                </Button>
+              }
+            />
+          ));
           console.log("New Post: ", response.postId);
           onClose();
         },
@@ -54,7 +112,7 @@ const PostForm = () => {
           toast.error(error);
         },
         onSettled: () => {
-          toast.dismiss("createPostToast");
+          toast.dismiss("create-post-toast");
         },
       }
     );
@@ -74,6 +132,7 @@ const PostForm = () => {
             attachImage
             maxCharacters={350}
             charLimitLabel
+            onFilesChange={handleLocalFileChange}
           />
 
           <div className="flex flex-row items-center justify-between">
@@ -100,7 +159,6 @@ const PostForm = () => {
 
           {/* UNCOMMENT IF THERE ARE ANY SCHEMA ERRORS */}
           {/* <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre> */}
-
           {/* Footer Here */}
         </div>
       </div>

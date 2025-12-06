@@ -19,12 +19,15 @@ import { Label } from "@/components/ui/label";
 
 interface Props {
   onChangeUserSelection?: (users: UserPreview[]) => void;
+  initialUsers?: UserPreview[];
 }
-const UserSelector = ({ onChangeUserSelection }: Props) => {
+const UserSelector = ({ onChangeUserSelection, initialUsers }: Props) => {
   const [searchValue, setSearchValue] = useState("");
   const debounced = useDebounce(searchValue, 500);
   const [open, setOpen] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState<UserPreview[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserPreview[]>(
+    initialUsers ?? []
+  );
 
   useEffect(() => {
     if (debounced.trim() !== "") {
@@ -56,16 +59,6 @@ const UserSelector = ({ onChangeUserSelection }: Props) => {
 
   return (
     <div className="w-full relative space-y-2">
-      <Label className="pt-1 font-semibold text-sm">
-        To:{" "}
-        {selectedUsers.length > 0 && (
-          <span className="text-primary font-semibold">
-            (
-            {`${selectedUsers.length} recipient${selectedUsers.length > 1 ? "s" : ""}`}
-            )
-          </span>
-        )}{" "}
-      </Label>
       <InputGroup className="w-full">
         {selectedUsers.length > 0 && (
           <InputGroupAddon

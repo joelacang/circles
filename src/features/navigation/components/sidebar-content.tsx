@@ -15,6 +15,9 @@ import { api } from "../../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useSearchSheet } from "@/features/search/hooks/use-search-sheet";
+import { bg } from "zod/v4/locales";
+import { bgGradientPrimary } from "@/lib/get-values";
+import UnreadBadge from "@/components/unread-badge";
 
 const SidebarContent = () => {
   const { t } = useTranslation();
@@ -22,7 +25,8 @@ const SidebarContent = () => {
     useNotificationSheet();
   const { onOpen: openSearch, open: searchSheetOpen } = useSearchSheet();
   const router = useRouter();
-  const unread = useQuery(api.notifications.getUnreadNotifCount);
+  const unreadNotifs = useQuery(api.notifications.getUnreadNotifCount);
+  const unreadMsgs = useQuery(api.messages.getUnreadMessagesCount);
   const pathname = usePathname();
   const isSheetOpen = notifSheetOpen || searchSheetOpen;
 
@@ -52,13 +56,14 @@ const SidebarContent = () => {
       icon: MessageCircleIcon,
       action: () => router.push(`/messages`),
       highlighted: pathname.startsWith("/messages") && !isSheetOpen,
+      count: unreadMsgs ?? 0,
     },
     {
       id: "notifications",
       label: t("sidebar:notificationsMenu"),
       icon: BellIcon,
-      action: () => openNotifications(unread ?? 0),
-      count: unread ?? 0,
+      action: () => openNotifications(unreadNotifs ?? 0),
+      count: unreadNotifs ?? 0,
       highlighted: notifSheetOpen,
     },
   ];
@@ -91,11 +96,7 @@ const SidebarContent = () => {
           </div>
 
           {item.count && item.count > 0 ? (
-            <div className="bg-blue-500 min-w-6 flex items-center justify-center p-1 rounded-full leading-none size-fit">
-              <p className="text-xs font-semibold text-primary-foreground">
-                {item.count}
-              </p>
-            </div>
+            <UnreadBadge count={item.count} />
           ) : null}
         </div>
       ))}

@@ -3,6 +3,7 @@ import { Doc, Id } from "../_generated/dataModel";
 import { QueryCtx } from "../_generated/server";
 import { AUDIENCE } from "@/types/enum";
 import { getLoggedUser, getUserPreview } from "./users";
+import { getPostAttachments } from "./postAttachments";
 
 export async function getPostStatus(
   ctx: QueryCtx,
@@ -43,6 +44,7 @@ export async function getPostData(
   const status = await getPostStatus(ctx, _id);
 
   const authorData = await ctx.db.get(authorId);
+  const attachments = await getPostAttachments({ ctx, postId: _id });
 
   if (!authorData) throw new Error("Author Data not found.");
 
@@ -51,10 +53,10 @@ export async function getPostData(
     id: _id,
     dateCreated: _creationTime,
     author: getUserPreview(authorData),
-    attachments: [],
     audience:
       Object.values(AUDIENCE).find((a) => a === audience) ?? AUDIENCE.PUBLIC,
     isLiked: status.isLiked,
     isBookmarked: status.isBookmarked,
-  };
+    attachments,
+  } satisfies Post;
 }

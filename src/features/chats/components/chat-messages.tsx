@@ -2,13 +2,16 @@ import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { ChatDetail, Message } from "../types";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { groupMessagesByDate } from "../utils";
 import SameDayMessages from "./same-day-messages";
 import { cn } from "@/lib/utils";
 import { useInView } from "react-intersection-observer";
 import { useMutation } from "convex/react";
 import ChatMessageSkeleton from "./chat-message-skeleton";
+import { useChat } from "@/providers/chat-provider";
+import ChatMessagesByDate from "./chat-messages-by-date";
+import { Grid2X2Plus } from "lucide-react";
 
 interface Props {
   chat: ChatDetail;
@@ -27,13 +30,21 @@ const ChatMessages = ({
     Message
   >(api.messages.getChatMessages, { chatId: chat.chat.id }, 50);
   const groupedMsgs = groupMessagesByDate(messages);
-  const containerRef = useRef<HTMLDivElement>(null);
   const bottomElRef = useRef<HTMLDivElement>(null);
   const readChat = useMutation(api.chats.readChat);
+  const { onAddContainerRef } = useChat();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) {
+      scrollContainerRef.current = node;
+      onAddContainerRef(node);
+    }
+  }, []);
+  const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { ref: bottomRef, inView: isAtBottom } = useInView({
     threshold: 0,
-    root: containerRef.current ?? undefined,
+    root: scrollContainerRef.current ?? undefined,
   });
 
   const setBottomRef = (node: HTMLDivElement | null) => {
@@ -70,6 +81,8 @@ const ChatMessages = ({
     }
   }, [scrollToBottom]);
 
+  useEffect;
+
   if (isLoadingFirstPage) {
     return (
       <div className=" flex w-full relative flex-col-reverse p-4 h-full overflow-y-auto gap-8">
@@ -90,19 +103,7 @@ const ChatMessages = ({
     >
       <div ref={setBottomRef} className="absolute bottom-0 w-1 h-56" />
       {groupedMsgs.map((grp) => (
-        <div key={grp.date}>
-          <div className=" pt-12 pb-24 w-full flex items-center justify-center">
-            <div className="flex items-center gap-6 justify-center max-w-lg w-full">
-              <div className="h-px w-full max-w-24 bg-border" />
-              <p className="text-xs text-muted-foreground font-light">
-                {grp.date}
-              </p>
-              <div className="h-px w-full max-w-24 bg-border" />
-            </div>
-          </div>
-
-          <SameDayMessages messages={grp.messages} chat={chat} />
-        </div>
+        <ChatMessagesByDate key={grp.date} group={grp} />
       ))}
     </div>
   );

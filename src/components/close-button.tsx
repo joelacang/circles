@@ -8,8 +8,23 @@ interface Props extends React.ComponentProps<"button"> {
   className?: string;
   tooltip?: string;
   size?: "sm" | "lg";
+  iconColor?: string;
+  variant?:
+    | "default"
+    | "link"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost";
 }
-const CloseButton = ({ className, tooltip, size = "sm", ...props }: Props) => {
+const CloseButton = ({
+  className,
+  tooltip,
+  iconColor = "#ef4444",
+  size = "sm",
+  variant = "ghost",
+  ...props
+}: Props) => {
   return (
     <Hint tooltip={tooltip ?? "Close"}>
       <Button
@@ -18,14 +33,12 @@ const CloseButton = ({ className, tooltip, size = "sm", ...props }: Props) => {
           className
         )}
         size="icon"
-        variant="ghost"
+        variant={variant}
         {...props}
       >
         <X
-          className={cn(
-            " text-destructive",
-            size === "sm" ? "size-4" : "size-5"
-          )}
+          className={cn(size === "sm" ? "size-4" : "size-5")}
+          color={iconColor}
         />
       </Button>
     </Hint>

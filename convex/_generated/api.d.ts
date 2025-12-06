@@ -21,6 +21,7 @@ import type * as helpers_follows from "../helpers/follows.js";
 import type * as helpers_messageReactions from "../helpers/messageReactions.js";
 import type * as helpers_messages from "../helpers/messages.js";
 import type * as helpers_notifications from "../helpers/notifications.js";
+import type * as helpers_postAttachments from "../helpers/postAttachments.js";
 import type * as helpers_posts from "../helpers/posts.js";
 import type * as helpers_stats from "../helpers/stats.js";
 import type * as helpers_users from "../helpers/users.js";
@@ -31,6 +32,7 @@ import type * as messages from "../messages.js";
 import type * as notifications from "../notifications.js";
 import type * as posts from "../posts.js";
 import type * as profiles from "../profiles.js";
+import type * as storage from "../storage.js";
 import type * as users from "../users.js";
 
 import type {
@@ -61,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   "helpers/messageReactions": typeof helpers_messageReactions;
   "helpers/messages": typeof helpers_messages;
   "helpers/notifications": typeof helpers_notifications;
+  "helpers/postAttachments": typeof helpers_postAttachments;
   "helpers/posts": typeof helpers_posts;
   "helpers/stats": typeof helpers_stats;
   "helpers/users": typeof helpers_users;
@@ -71,6 +74,7 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   posts: typeof posts;
   profiles: typeof profiles;
+  storage: typeof storage;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

@@ -21,7 +21,7 @@ const ReactBadge = ({ emoji, messageId }: Props) => {
       <PopoverTrigger asChild>
         <Button size="sm" variant="ghost" className=" size-fit py-px px-2">
           <p className="flex items-center justify-center gap-2">
-            <span className="text-2xl">{emoji.emojiNative}</span>
+            <span className="text-xl">{emoji.emojiNative}</span>
             <span className="text-xs font-semibold">{emoji.count}</span>
           </p>
         </Button>
