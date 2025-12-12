@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import ToastMessage from "@/components/toast-message";
 import { MODE } from "@/types/enum";
-import EmojiPicker from "@/components/emoji-picker";
+import EmojiPickerPopover from "@/components/emoji-picker-popover";
 import { Emoji } from "../types";
 import { useInsertToText } from "@/hooks/use-insert-text";
 import MessagePreviewCard from "./message-preview-card";
@@ -191,7 +191,7 @@ const ChatInput = ({ chatId }: Props) => {
             multiple
             disabled={isLoading}
           />
-          <EmojiPicker onSelectEmoji={handleSelectEmoji}>
+          <EmojiPickerPopover onSelectEmoji={handleSelectEmoji}>
             <Button
               variant="outline"
               className="rounded-full border-primary"
@@ -200,7 +200,7 @@ const ChatInput = ({ chatId }: Props) => {
             >
               <Smile />
             </Button>
-          </EmojiPicker>
+          </EmojiPickerPopover>
         </InputGroupAddon>
         <InputGroupTextarea
           ref={inputRef}

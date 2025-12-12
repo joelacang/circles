@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "../../../components/ui/popover";
 import Hint from "../../../components/hint";
-import EmojiPicker from "../../../components/emoji-picker";
+import EmojiPickerPopover from "../../../components/emoji-picker-popover";
 import { api } from "../../../../convex/_generated/api";
 import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import { useMutation } from "convex/react";
@@ -92,11 +92,11 @@ const ReactionButton = ({ messageId }: Props) => {
 
         <Hint tooltip="More Emojis">
           <div>
-            <EmojiPicker onSelectEmoji={handleReactMessage}>
+            <EmojiPickerPopover onSelectEmoji={handleReactMessage}>
               <Button className="rounded-full" size="icon" variant="ghost">
                 <MoreHorizontal className="text-primary" />
               </Button>
-            </EmojiPicker>
+            </EmojiPickerPopover>
           </div>
         </Hint>
       </PopoverContent>

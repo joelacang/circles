@@ -1,27 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import Picker from "@emoji-mart/react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import React from "react";
 import { Emoji } from "@/features/chats/types";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 interface Props {
   children: React.ReactNode;
   onSelectEmoji: (emoji: Emoji) => void;
 }
-const EmojiPicker = ({ children, onSelectEmoji }: Props) => {
+const EmojiPickerPopover = ({ children, onSelectEmoji }: Props) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
 
       <PopoverContent className="p-0">
-        <Picker
-          onEmojiSelect={(emoji: any) => {
+        <EmojiPicker
+          onEmojiClick={(emoji: EmojiClickData) => {
             onSelectEmoji({
-              id: emoji.id as string,
-              title: emoji.name as string,
-              native: emoji.native as string,
-              code: emoji.shortcodes as string,
+              id: emoji.names[0] ?? "Selected Emoji",
+              title: emoji.names[0] ?? "Selected Emoji",
+              native: emoji.emoji,
+              code: emoji.emoji,
             });
           }}
         />
@@ -30,4 +28,4 @@ const EmojiPicker = ({ children, onSelectEmoji }: Props) => {
   );
 };
 
-export default EmojiPicker;
+export default EmojiPickerPopover;

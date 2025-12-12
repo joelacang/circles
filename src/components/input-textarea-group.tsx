@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import EmojiPicker from "./emoji-picker";
+import EmojiPickerPopover from "./emoji-picker-popover";
 import { useInsertToText } from "@/hooks/use-insert-text";
 import { Emoji } from "@/features/chats/types";
 import { LocalFile } from "@/features/attachments/types";
@@ -134,7 +134,7 @@ const InputTextareaGroup = ({
 
             {emojiPicker && (
               <Hint tooltip={t("posts:emojiTooltip")}>
-                <EmojiPicker onSelectEmoji={handleSelectEmoji}>
+                <EmojiPickerPopover onSelectEmoji={handleSelectEmoji}>
                   <InputGroupButton
                     type="button"
                     className="rounded-full cursor-pointer"
@@ -143,7 +143,7 @@ const InputTextareaGroup = ({
                   >
                     <Smile />
                   </InputGroupButton>
-                </EmojiPicker>
+                </EmojiPickerPopover>
               </Hint>
             )}
           </div>
