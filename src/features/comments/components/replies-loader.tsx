@@ -13,11 +13,10 @@ interface Props {
   level: number;
 }
 const RepliesLoader = ({ postId, parentCommentId, level }: Props) => {
-  const { results, isLoadingMore, hasMore, isDone, loadMore } =
-    useInfiniteQuery<
-      { postId: Id<"posts">; parentCommentId: Id<"comments"> },
-      Comment
-    >(api.comments.getReplies, { postId, parentCommentId }, 3);
+  const { results, isLoadingMore, hasMore, loadMore } = useInfiniteQuery<
+    { postId: Id<"posts">; parentCommentId: Id<"comments"> },
+    Comment
+  >(api.comments.getReplies, { postId, parentCommentId }, 3);
 
   return (
     <div className="py-2">
@@ -30,12 +29,7 @@ const RepliesLoader = ({ postId, parentCommentId, level }: Props) => {
             )}
           />
           <div className="pl-10">
-            <CommentCard
-              comment={comment}
-              childComment
-              lastChildComment={index === results.length - 1}
-              level={level}
-            />
+            <CommentCard comment={comment} childComment level={level} />
           </div>
         </div>
       ))}

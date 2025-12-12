@@ -1,8 +1,7 @@
-import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
-import LoadingMessage from "@/components/loading-message";
 import FollowCard from "./follow-card";
+import { UserPreview } from "@/features/users/types";
 
 interface Props {
   userId: string;
@@ -11,13 +10,13 @@ interface Props {
 const FollowersSection = ({ userId }: Props) => {
   const { isLoadingFirstPage, results } = useInfiniteQuery<
     { userId: string },
-    string
+    UserPreview
   >(api.follows.getFollowers, { userId }, 10);
 
   return (
     <div>
-      {results.map((r) => (
-        <FollowCard isLoading={isLoadingFirstPage} userId={r} key={r} />
+      {results.map((user) => (
+        <FollowCard isLoading={isLoadingFirstPage} user={user} key={user.id} />
       ))}
     </div>
   );

@@ -1,6 +1,6 @@
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { ChatDetail } from "../types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, useRouter } from "next/navigation";

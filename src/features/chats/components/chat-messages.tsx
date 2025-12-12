@@ -1,17 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { ChatDetail, Message } from "../types";
 import { useCallback, useEffect, useRef } from "react";
 import { groupMessagesByDate } from "../utils";
-import SameDayMessages from "./same-day-messages";
 import { cn } from "@/lib/utils";
 import { useInView } from "react-intersection-observer";
 import { useMutation } from "convex/react";
 import ChatMessageSkeleton from "./chat-message-skeleton";
 import { useChat } from "@/providers/chat-provider";
 import ChatMessagesByDate from "./chat-messages-by-date";
-import { Grid2X2Plus } from "lucide-react";
 
 interface Props {
   chat: ChatDetail;
@@ -40,7 +39,6 @@ const ChatMessages = ({
       onAddContainerRef(node);
     }
   }, []);
-  const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { ref: bottomRef, inView: isAtBottom } = useInView({
     threshold: 0,
@@ -80,8 +78,6 @@ const ChatMessages = ({
       });
     }
   }, [scrollToBottom]);
-
-  useEffect;
 
   if (isLoadingFirstPage) {
     return (

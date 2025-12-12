@@ -1,7 +1,6 @@
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { ChatDetail } from "../types";
 import { api } from "../../../../convex/_generated/api";
-import InfoMessage from "@/components/info-message";
 import ConversationList from "./conversation-list";
 import ConversationCardSkeleton from "./conversation-card-skeleton";
 import { MailPlus, SearchX } from "lucide-react";

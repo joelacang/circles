@@ -3,12 +3,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { EmojiGroupCount, MessageReact } from "../types";
+import { EmojiGroupCount } from "../types";
 import { Button } from "@/components/ui/button";
-import { useInfiniteQuery } from "@/hooks/use-infinite-query";
-import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import UserItemSkeleton from "@/features/users/components/user-item-skeleton";
 import MessageReactDetails from "./message-react-details";
 
 interface Props {

@@ -4,13 +4,11 @@ import UserAvatar from "@/features/users/components/user-avatar";
 import { SIZE } from "@/types/enum";
 import { MessageCircleIcon, MoreHorizontalIcon } from "lucide-react";
 import { Comment } from "../types";
-import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
 import { formatDistanceToNowStrict } from "date-fns";
 import CommentLikeButton from "./comment-like-button";
 import { useState } from "react";
 import CommentBox from "./comment-box";
 import RepliesLoader from "./replies-loader";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
 

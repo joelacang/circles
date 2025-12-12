@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Message, MessageDraft } from "../types";
 import { UserPreview } from "@/features/users/types";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { searchUser } from "../../../../convex/users";
+import { LocalFile } from "@/features/attachments/types";
 
 type AddNewMessageDialogState = {
   open: boolean;
@@ -10,6 +10,7 @@ type AddNewMessageDialogState = {
   draft: MessageDraft | null;
   message: Message | null;
   searchUsers: boolean;
+  attachments: LocalFile[];
   onOpenDraft: (draft: MessageDraft, searchUsers?: boolean) => void;
   onOpenWithRecipients: (
     recipients: UserPreview[],
@@ -19,6 +20,7 @@ type AddNewMessageDialogState = {
   onAddRecipient: (recipient: UserPreview) => void;
   onRemoveRecipient: (recipientId: Id<"users">) => void;
   onChangeRecipients: (recipients: UserPreview[]) => void;
+  onAttachmentChange: (attachments: LocalFile[]) => void;
   onEditBody: (body: string) => void;
   onClearBody: () => void;
   onClear: () => void;
@@ -35,6 +37,7 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
     draft: null,
     message: null,
     searchUsers: false,
+    attachments: [],
     onOpenDraft: (draft, searchUsers) =>
       set({ open: true, draft, searchUsers: searchUsers ?? false }),
     onOpenWithRecipients: (recipients, searchUsers) =>
@@ -80,6 +83,7 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
         },
       });
     },
+    onAttachmentChange: (attachments) => set({ attachments }),
     onChangeRecipients: (recipients) => {
       const state = useAddNewMessageDialog.getState();
 
@@ -123,6 +127,7 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
       set({
         draft: { body: "", recipients: [] },
         message: null,
+        attachments: [],
       }),
     onOpen: () =>
       set({
@@ -130,7 +135,8 @@ export const useAddNewMessageDialog = create<AddNewMessageDialogState>(
         draft: { recipients: [], body: "" },
         searchUsers: true,
       }),
-    onClose: () => set({ open: false, draft: null, message: null }),
+    onClose: () =>
+      set({ open: false, draft: null, message: null, attachments: [] }),
     onPending: () => set({ pending: true }),
     onCompleted: () => set({ pending: false }),
   })

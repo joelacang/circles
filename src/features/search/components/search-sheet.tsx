@@ -7,12 +7,11 @@ import {
 } from "@/components/ui/sheet";
 import { useSearchSheet } from "../hooks/use-search-sheet";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useMedia } from "use-media";
+import SearchSection from "./search-section";
 
 const SearchSheet = () => {
   const { open, onOpen, onClose, pending } = useSearchSheet();
-  const isMobile = useIsMobile();
   const is5xl = useMedia("(min-width:1024px)");
 
   return (
@@ -29,11 +28,11 @@ const SearchSheet = () => {
       }}
     >
       <SheetContent side="left" className={cn(is5xl ? "ml-80" : "ml-0")}>
-        <SheetHeader>
+        <SheetHeader className="pt-4 pb-0">
           <SheetTitle>Search</SheetTitle>
-          <SheetDescription>Search Users, Circles</SheetDescription>
+          <SheetDescription>Search for Users, Groups</SheetDescription>
         </SheetHeader>
-        <div></div>
+        <SearchSection />
       </SheetContent>
     </Sheet>
   );

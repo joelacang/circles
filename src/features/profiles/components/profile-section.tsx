@@ -1,9 +1,7 @@
 import UserAvatar from "@/features/users/components/user-avatar";
 import { Profile } from "../types";
-import { UserPreview } from "@/features/users/types";
 import { SIZE } from "@/types/enum";
-import { GlobeIcon, Mail, MessageCircle } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { GlobeIcon } from "lucide-react";
 import ProfileCount from "./profile-count";
 import UserPosts from "@/features/posts/components/user-posts";
 import EditProfileButton from "./edit-profile-button";
@@ -13,10 +11,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import FollowButton from "@/features/follow/components/follow-button";
-import UnfollowButton from "@/features/follow/components/unfollow-button";
 import { useFollowDialog } from "@/features/follow/hooks/use-follow-dialog";
-import { Button } from "@/components/ui/button";
-import Hint from "@/components/hint";
 import ChatUserButton from "@/features/chats/components/chat-user-button";
 import useMedia from "use-media";
 
@@ -45,13 +40,7 @@ const ProfileSection = ({ profile }: Props) => {
                   <Skeleton className="h-9 w-24" />
                 </div>
               ) : (
-                <>
-                  {isFollowing ? (
-                    <UnfollowButton user={profile.user} />
-                  ) : (
-                    <FollowButton user={profile.user} />
-                  )}
-                </>
+                <FollowButton user={profile.user} isFollowing={isFollowing} />
               )}
             </>
           )}

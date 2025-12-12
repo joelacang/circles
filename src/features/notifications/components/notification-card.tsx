@@ -18,7 +18,7 @@ import { SIZE } from "@/types/enum";
 import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import { api } from "../../../../convex/_generated/api";
 import { useMutation } from "convex/react";
-import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 
 interface Props {
   notif: Notification;
@@ -26,8 +26,7 @@ interface Props {
 
 const NotificationCard = ({ notif }: Props) => {
   const readNotifFn = useMutation(api.notifications.read);
-  const { mutate: readNotif, isLoading: isReadingNotification } =
-    useConvexMutationHandler(readNotifFn);
+  const { mutate: readNotif } = useConvexMutationHandler(readNotifFn);
   const { t } = useTranslation();
   const notifDisplay = getNotificationDisplay({
     action: notif.action,

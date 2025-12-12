@@ -2,8 +2,6 @@
 
 import Picker from "@emoji-mart/react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Button } from "./ui/button";
-import { MoreHorizontal } from "lucide-react";
 import React from "react";
 import { Emoji } from "@/features/chats/types";
 

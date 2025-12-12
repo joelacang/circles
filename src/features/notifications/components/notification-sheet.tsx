@@ -6,7 +6,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useNotificationSheet } from "../hooks/use-notification-sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import NotificationSection from "./notification-section";
 import useMedia from "use-media";

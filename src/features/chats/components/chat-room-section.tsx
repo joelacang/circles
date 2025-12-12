@@ -8,9 +8,6 @@ import { ChatDetail } from "../types";
 import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { useChatBar } from "../hooks/use-chat-bar";
-import { bgGradientPrimary } from "@/lib/get-values";
-import { useChat } from "@/providers/chat-provider";
 
 interface Props {
   chat: ChatDetail;
@@ -21,8 +18,6 @@ const ChatRoomSection = ({ chat }: Props) => {
   const [scrollToBottom, setScrollToBottom] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const readChat = useMutation(api.chats.readChat);
-  const { open: floatChatOpen, mode } = useChatBar();
-  const usingFloatChat = floatChatOpen && mode === "room";
 
   const handleScrolledToBottom = () => {
     setScrollToBottom(false);

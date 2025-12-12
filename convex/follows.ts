@@ -4,7 +4,8 @@ import { getFollowData, isFollowing } from "./helpers/follows";
 import { updateStats } from "./helpers/stats";
 import { paginationOptsValidator } from "convex/server";
 import { addNotification } from "./helpers/notifications";
-import { getLoggedUser } from "./helpers/users";
+import { getLoggedUser, getUser } from "./helpers/users";
+import { getUserById } from "./users";
 
 export const followUser = mutation({
   args: { userIdToFollow: v.id("users") },
@@ -98,18 +99,24 @@ export const getIsFollowing = query({
 export const getFollowers = query({
   args: { paginationOpts: paginationOptsValidator, userId: v.id("users") },
   handler: async (ctx, args) => {
-    const followers = await ctx.db
+    const followerResults = await ctx.db
       .query("follows")
       .withIndex("by_followedUserId", (q) =>
         q.eq("followedUserId", args.userId)
       )
       .paginate(args.paginationOpts);
 
-    const followerIds = followers.page.map((f) => f.followedByUserId);
+    const followers = (
+      await Promise.all(
+        followerResults.page.map(async (result) => {
+          return await getUser({ ctx, userId: result.followedByUserId });
+        })
+      )
+    ).filter((u) => u !== null);
 
     return {
       ...followers,
-      page: followerIds,
+      page: followers,
     };
   },
 });

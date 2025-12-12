@@ -14,19 +14,13 @@ interface Props {
 }
 
 const CommentsLoader = ({ postId, order }: Props) => {
-  const {
-    results,
-    isLoadingFirstPage,
-    isLoadingMore,
-    loadMore,
-    hasMore,
-    isDone,
-  } = useInfiniteQuery<{ postId: Id<"posts">; order: ORDER }, Comment>(
-    api.comments.getTopLevelComments,
-    { postId, order },
-    5,
-    false
-  );
+  const { results, isLoadingFirstPage, isLoadingMore, loadMore, hasMore } =
+    useInfiniteQuery<{ postId: Id<"posts">; order: ORDER }, Comment>(
+      api.comments.getTopLevelComments,
+      { postId, order },
+      5,
+      false
+    );
 
   if (isLoadingFirstPage) {
     return (

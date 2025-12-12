@@ -2,7 +2,6 @@ import UserAvatar from "@/features/users/components/user-avatar";
 import { ChatDetail } from "../types";
 import { SIZE } from "@/types/enum";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import UnreadBadge from "@/components/unread-badge";
 
 interface Props {

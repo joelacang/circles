@@ -1,15 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import { Button } from "@/components/ui/button";
 import Feature from "@/features/docs/components/feature";
 import { useDocumentDialog } from "@/features/docs/hooks/use-document-dialog";
-import i18n from "@/i18n";
 import LanguageSwitcher from "@/i18n/language-switcher";
 import { useClerk } from "@clerk/nextjs";
-import {
-  CameraIcon,
-  GroupIcon,
-  MessageCircleIcon,
-  Users2Icon,
-} from "lucide-react";
+import { CameraIcon, MessageCircleIcon, Users2Icon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const WelcomeScreen = () => {

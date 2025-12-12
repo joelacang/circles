@@ -19,12 +19,12 @@ import {
 import { FaUsers } from "react-icons/fa";
 import { DialogFooter } from "@/components/ui/dialog";
 import InputTextareaGroup from "@/components/input-textarea-group";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LocalFile } from "@/features/attachments/types";
 import { useUploadFiles } from "@/features/attachments/hooks/use-upload-files";
 import ToastMessage from "@/components/toast-message";
-import { Id } from "../../../../convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
+import { AttachmentDetail } from "@/types";
 
 const PostForm = () => {
   const { user } = useUser();
@@ -44,7 +44,7 @@ const PostForm = () => {
   };
 
   const onSubmit = async () => {
-    let storageIds: Id<"_storage">[] = [];
+    let attachments: AttachmentDetail[] = [];
 
     if (localFiles.length > 0) {
       const filesToBeUploaded = localFiles.map((f) => f.file);
@@ -54,7 +54,8 @@ const PostForm = () => {
         { id: "uploading-files-toast" }
       );
 
-      const { success, uploadedIds } = await uploadFiles(filesToBeUploaded);
+      const { success, attachments: attachmentsData } =
+        await uploadFiles(filesToBeUploaded);
 
       toast.dismiss("uploading-files-toast");
 
@@ -72,14 +73,14 @@ const PostForm = () => {
         return;
       }
 
-      storageIds = uploadedIds;
+      attachments = attachmentsData;
     }
 
     createPost(
       {
         body,
         audience,
-        storageIds,
+        attachments,
       },
       {
         onLoading: () => {

@@ -2,8 +2,7 @@ import { RefObject } from "react";
 import { useInView } from "react-intersection-observer";
 
 export function useDateInView(
-  chatContainerRef: RefObject<HTMLDivElement | null>,
-  date: string
+  chatContainerRef: RefObject<HTMLDivElement | null>
 ) {
   const { ref, inView } = useInView({
     root: chatContainerRef.current ?? undefined,

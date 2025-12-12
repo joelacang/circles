@@ -185,11 +185,11 @@ export async function addCommentNotification({
     | { action: "like"; commentId: Id<"comments"> }
     | { action: "reply"; commentId: Id<"comments"> };
 }): Promise<Id<"notifications"> | null> {
-  const comment = await ctx.db.get(source.commentId);
-  if (!comment) throw new Error("Comment not found.");
-
   const loggedUser = await getLoggedUser(ctx);
   if (!loggedUser) throw new Error("Unauthorized. You are not logged in.");
+
+  const comment = await ctx.db.get(source.commentId);
+  if (!comment) throw new Error("Comment not found.");
 
   //Get tags and mentions;
   const mentionedUsers: RecipientData[] = (
@@ -207,15 +207,12 @@ export async function addCommentNotification({
 
   const uniqueRecipients = deDupRecipients(allRecipients);
 
-  if (source.action === "like") {
-    return await addNotification({
-      ctx,
-      recipients: uniqueRecipients,
-      source,
-      preview,
-    });
-  } else {
-  }
+  return await addNotification({
+    ctx,
+    recipients: uniqueRecipients,
+    source,
+    preview,
+  });
 }
 
 export async function getPostRecipients({

@@ -34,7 +34,12 @@ export const likeComment = mutation({
 
     await addNotification({
       ctx,
-      recipientId: comment.authorId,
+      recipients: [
+        {
+          id: comment.authorId,
+          type: "author",
+        },
+      ],
       source: {
         action: "like",
         commentId: comment._id,

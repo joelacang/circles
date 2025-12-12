@@ -7,7 +7,6 @@ import {
 } from "../../../components/ui/popover";
 import Hint from "../../../components/hint";
 import EmojiPicker from "../../../components/emoji-picker";
-import { getEmojiDataFromNative } from "emoji-mart";
 import { api } from "../../../../convex/_generated/api";
 import { useConvexMutationHandler } from "@/hooks/use-convex-mutation-handler";
 import { useMutation } from "convex/react";

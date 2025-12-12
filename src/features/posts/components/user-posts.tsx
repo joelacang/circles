@@ -1,6 +1,5 @@
 import { api } from "../../../../convex/_generated/api";
 import PostCard from "./post-card";
-import { useGetUserDetails } from "@/features/users/hooks/use-get-user-details";
 import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { Post } from "../types";
 import PostCardSkeleton from "./post-card-skeleton";

@@ -1,17 +1,16 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { MailPlus, MessageCirclePlus, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import ConversationList from "./conversation-list";
 import { cn } from "@/lib/utils";
 import { ChatDetail } from "../types";
 import ConversationCardSkeleton from "./conversation-card-skeleton";
 import InfoMessage from "@/components/info-message";
-import Hint from "@/components/hint";
 import AddNewMessageButton from "./add-new-message-button";
 
 interface Props {

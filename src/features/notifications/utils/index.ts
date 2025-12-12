@@ -1,4 +1,3 @@
-import { NOTIF_ACTION } from "@/types/enum";
 import { NotifDisplay } from "../types";
 import {
   AtSign,

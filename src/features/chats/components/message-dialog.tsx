@@ -93,8 +93,9 @@ const MessageDialog = () => {
     const { body, recipients } = draft;
 
     if (!draft.id) {
+      
       sendMessage(
-        { body, recipientIds: recipients.map((r) => r.id) },
+        { body, recipientIds: recipients.map((r) => r.id), attachments: [] },
         {
           onLoading: () => {
             onAddMessagePending();

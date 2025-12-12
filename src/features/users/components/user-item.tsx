@@ -1,17 +1,11 @@
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
+import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { cn } from "@/lib/utils";
 import UserAvatar from "./user-avatar";
 import { UserPreview } from "@/features/users/types";
-import { useRouter } from "next/navigation";
 import { SIZE } from "@/types/enum";
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
 import { UserNameButton } from "./username-button";
+import Link from "next/link";
 
 interface Props {
   variant?: "default" | "outline" | "muted";
@@ -76,7 +70,10 @@ const UserItem = ({
         ) : mode === "click" ? (
           <UserNameButton user={user} />
         ) : (
-          <ItemTitle className="font-semibold">{user.name}</ItemTitle>
+          <ItemTitle className="font-semibold">
+            <Link href={`/@${user.username}`}></Link>
+            {user.name}
+          </ItemTitle>
         )}
         {/* <div
           className={cn(

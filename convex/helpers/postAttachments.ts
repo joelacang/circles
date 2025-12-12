@@ -17,12 +17,17 @@ export async function getPostAttachments({
   const attachments: Attachment[] = (
     await Promise.all(
       postAttachments.map(async (a) => {
-        const url = await ctx.storage.getUrl(a.storageId);
+        const attachmentData = await ctx.db.get(a.attachmentId);
+
+        if (!attachmentData) return null;
+
+        const url = await ctx.storage.getUrl(attachmentData.storageId);
 
         if (!url) return null;
+
         return {
           id: a._id,
-          storageId: a.storageId,
+          storageId: attachmentData.storageId,
           url,
         } satisfies Attachment;
       })

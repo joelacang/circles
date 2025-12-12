@@ -33,7 +33,7 @@ const UserProfileFormDialog = () => {
           <DialogDescription>{t("users:profileDialogDesc")}</DialogDescription>
         </DialogHeader>
 
-        {user && <UserProfileForm profile={profile} clerkId={user?.id} />}
+        {user && <UserProfileForm profile={profile} />}
       </DialogContent>
     </Dialog>
   );

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/popover";
 import { UserPreview } from "../types";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { Label } from "@/components/ui/label";
 
 interface Props {
   onChangeUserSelection?: (users: UserPreview[]) => void;

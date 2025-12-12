@@ -75,6 +75,7 @@ const CommentLikeButton = ({ isLiked, commentId, count }: Props) => {
       }}
       color="#f43f5e"
       filled={isLiked}
+      disabled={isLoading}
     />
   );
 };

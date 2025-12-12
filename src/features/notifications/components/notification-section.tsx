@@ -24,7 +24,7 @@ const NotificationSection = () => {
 
   return (
     <div className="px-2 space-y-1">
-      {sortedResults.map((notif, index) => (
+      {sortedResults.map((notif) => (
         <NotificationCard notif={notif} key={notif.id} />
       ))}
     </div>

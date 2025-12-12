@@ -1,4 +1,5 @@
-import { Eraser, Image, ImageIcon, Paperclip, Smile } from "lucide-react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Eraser, Smile } from "lucide-react";
 import Hint from "./hint";
 import {
   InputGroup,

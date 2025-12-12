@@ -2,8 +2,6 @@ import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
 import { createUserFromWebhook } from "@/features/users/helpers/create-user-from-webhook";
 import { updateUserFromWebhook } from "@/features/users/helpers/update-user-from-webhook";
-import { fetchMutation } from "convex/nextjs";
-import { api } from "../../../../../convex/_generated/api";
 
 export async function POST(req: NextRequest) {
   try {

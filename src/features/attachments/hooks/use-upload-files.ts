@@ -4,7 +4,6 @@ import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { AttachmentDetail } from "@/types";
 import { useGetImageDimensions } from "@/hooks/use-get-image-dimensions";
-import { Attachment } from "../types";
 
 export const useUploadFiles = () => {
   const uploadUrlFn = useMutation(api.storage.generateUploadURL);

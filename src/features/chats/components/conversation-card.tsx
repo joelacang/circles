@@ -37,7 +37,7 @@ const ConversationCard = ({ chat, selected = false }: Props) => {
   const { onOpenChat, open, mode } = useChatBar();
   const unread = chat.chat.unreadCount > 0;
   const readChatFn = useMutation(api.chats.readChat);
-  const { mutate: readChat, isLoading } = useConvexMutationHandler(readChatFn);
+  const { mutate: readChat } = useConvexMutationHandler(readChatFn);
   const getLatestSender = () => {
     if (loggedUser?.id === chat.chat.latestMessageSenderId) return loggedUser;
 

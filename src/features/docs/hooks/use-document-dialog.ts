@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { Document } from "../types";
 
 type DocumentDialogState = {
   type: "privacy" | "tos" | null;

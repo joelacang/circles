@@ -5,7 +5,6 @@ import { api } from "../../../../convex/_generated/api";
 import ErrorMessage from "@/components/error-message";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChat } from "../../../providers/chat-provider";
-import { useScrollToById } from "@/hooks/use-scroll-to-by-id";
 
 interface Props {
   messageId: Id<"messages">;

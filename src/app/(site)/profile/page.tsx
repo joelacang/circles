@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import ProfileLoader from "@/features/profiles/components/profile-loader";
 import InfoMessage from "@/components/info-message";
 import { useQuery } from "convex/react";

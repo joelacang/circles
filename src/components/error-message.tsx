@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LucideIcon, SearchX, TriangleAlert } from "lucide-react";
+import { LucideIcon, TriangleAlert } from "lucide-react";
 import { HTMLProps } from "react";
 
 interface Props extends HTMLProps<HTMLDivElement> {

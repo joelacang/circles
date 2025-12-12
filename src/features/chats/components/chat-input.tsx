@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import {

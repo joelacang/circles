@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import ConversationSectionCompact from "./conversation-section-compact";
 import ConversationsSection from "./conversations-section";
-import InfoMessage from "@/components/info-message";
 
 const ConversationsLoader = () => {
   const params = useParams();
@@ -15,12 +14,11 @@ const ConversationsLoader = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  const { results, isLoadingFirstPage, isLoadingMore, hasMore, isDone } =
-    useInfiniteQuery<object, ChatDetail>(
-      api.chatParticipants.getAllChatParticipation,
-      {},
-      15
-    );
+  const { results, isLoadingFirstPage } = useInfiniteQuery<object, ChatDetail>(
+    api.chatParticipants.getAllChatParticipation,
+    {},
+    15
+  );
 
   useEffect(() => {
     const shouldRedirect =

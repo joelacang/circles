@@ -17,7 +17,6 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
-import { useProfileDialog } from "../hooks/use-profile-dialog";
 import MyDropdownMenuItem from "@/components/my-dropdown-menu-item";
 import { languages } from "@/i18n/resources";
 import { useTranslation } from "react-i18next";

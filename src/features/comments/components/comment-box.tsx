@@ -5,7 +5,7 @@ import {
   InputGroupAddon,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { PlusIcon, SendIcon, XIcon } from "lucide-react";
+import { SendIcon, XIcon } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useForm } from "react-hook-form";
 import { CreateComment, createCommentSchema } from "../schemas";

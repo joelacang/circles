@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import UserAvatar from "@/features/users/components/user-avatar";
 import { getAvatarSize } from "@/lib/get-values";
 import { cn } from "@/lib/utils";

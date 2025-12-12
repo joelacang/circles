@@ -1,8 +1,5 @@
 import { SIZE } from "@/types/enum";
 import UserAvatar from "./user-avatar";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import Hint from "@/components/hint";
 import { cn } from "@/lib/utils";
 import ProfileHoverCard from "@/features/profiles/components/profile-hover-card";
 import { UserPreview } from "../types";

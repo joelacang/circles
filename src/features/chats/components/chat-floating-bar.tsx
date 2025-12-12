@@ -13,14 +13,12 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import ChatProvider from "../../../providers/chat-provider";
 import ChatFloatingRoom from "./chat-floating-room";
-import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import { useCounts } from "@/providers/counts-provider";
 import UnreadBadge from "@/components/unread-badge";
 import { bgGradientPrimary } from "@/lib/get-values";
 
 const ChatFloatingBar = () => {
-  const { open, onToggleOpen, mode, room, onReturn, onClose } = useChatBar();
+  const { open, onToggleOpen, mode, room, onClose } = useChatBar();
   const { user } = useUser();
   const pathname = usePathname();
   const { unreadMsgs } = useCounts();

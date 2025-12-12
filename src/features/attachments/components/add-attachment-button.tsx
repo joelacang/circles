@@ -2,8 +2,6 @@ import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { Image, Paperclip } from "lucide-react";
 import React, { useRef } from "react";
-import { useAttachmentPreview } from "../hooks/use-attachments-preview";
-import { file } from "zod";
 
 interface Props extends React.ComponentProps<"button"> {
   tooltip?: string;

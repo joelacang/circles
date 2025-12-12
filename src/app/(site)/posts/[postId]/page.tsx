@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import PostLoader from "@/features/posts/components/post-loader";
-import { Id } from "../../../../../convex/_generated/dataModel";
 import InfoMessage from "@/components/info-message";
 
 const PostDetailPage = () => {

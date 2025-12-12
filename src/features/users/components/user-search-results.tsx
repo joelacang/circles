@@ -2,7 +2,6 @@ import { useInfiniteQuery } from "@/hooks/use-infinite-query";
 import { api } from "../../../../convex/_generated/api";
 import { UserPreview } from "../types";
 import { Loader2, SearchX } from "lucide-react";
-import UserItem from "./user-item";
 import ErrorMessage from "@/components/error-message";
 import UserSearchResultItem from "./user-search-result-item";
 import { useState } from "react";

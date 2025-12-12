@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/input-otp";
 import React, { useEffect, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import FormActionButton from "@/components/form-action-button";
 import { cn } from "@/lib/utils";
 import { CheckIcon, Trash, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const ConfirmAlert = () => {
     error,
     onClose,
     onDestruct,
-    onConfirm,
     onValidate: validate,
     onError: setError,
     onConfirm: confirm,
@@ -159,7 +157,7 @@ const ConfirmAlert = () => {
               isPending ||
               (confirmDetails.enableConfirmation && (code === "" || !code))
             }
-            onClick={onConfirm}
+            onClick={handleConfirmation}
             className={cn(
               confirmDetails.mode === "destructive" &&
                 "bg-destructive hover:bg-destructive"

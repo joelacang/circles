@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import UserItem from "@/features/users/components/user-item";
 import { Message } from "../types";
 import { useQuery } from "convex/react";
@@ -16,7 +17,6 @@ import { cn } from "@/lib/utils";
 interface Props extends HTMLProps<HTMLDivElement> {
   message: Message;
   authorId: Id<"users">;
-  clickable?: boolean;
   removable?: boolean;
   minimizable?: boolean;
   minimized?: boolean;
@@ -29,7 +29,6 @@ interface Props extends HTMLProps<HTMLDivElement> {
 const MessagePreviewCard = ({
   message,
   authorId,
-  clickable = false,
   removable = false,
   minimizable = false,
   minimized = false,

@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dice1 } from "lucide-react";
 
 const NotificationCardSkeleton = () => {
   return (

@@ -12,7 +12,6 @@ import { ArrowLeft, PanelRightOpen } from "lucide-react";
 import { ChatDetail } from "../types";
 import ChatAvatar from "./chat-avatar";
 import { getChatName } from "../utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 import Hint from "@/components/hint";
 import { usePathname, useRouter } from "next/navigation";
 import { useChatBar } from "../hooks/use-chat-bar";

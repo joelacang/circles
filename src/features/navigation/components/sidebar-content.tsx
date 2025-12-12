@@ -13,10 +13,7 @@ import { useNotificationSheet } from "@/features/notifications/hooks/use-notific
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import { useSearchSheet } from "@/features/search/hooks/use-search-sheet";
-import { bg } from "zod/v4/locales";
-import { bgGradientPrimary } from "@/lib/get-values";
 import UnreadBadge from "@/components/unread-badge";
 
 const SidebarContent = () => {

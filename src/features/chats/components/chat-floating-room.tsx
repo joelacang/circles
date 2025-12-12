@@ -1,5 +1,4 @@
-import { Id } from "../../../../convex/_generated/dataModel";
-import ChatProvider, { useChat } from "../../../providers/chat-provider";
+import { useChat } from "../../../providers/chat-provider";
 import ChatRoomSection from "./chat-room-section";
 
 const ChatFloatingRoom = () => {

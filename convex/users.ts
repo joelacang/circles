@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { action, internalMutation, mutation, query } from "./_generated/server";
 import { getLoggedUser, getUser, getUserPreview } from "./helpers/users";
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { insertStats } from "./helpers/stats";
 import { paginationOptsValidator } from "convex/server";
 import { UserPreview } from "@/features/users/types";

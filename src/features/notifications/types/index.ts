@@ -1,4 +1,3 @@
-import { NOTIF_ACTION } from "@/types/enum";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { LucideIcon } from "lucide-react";
 import { UserPreview } from "@/features/users/types";

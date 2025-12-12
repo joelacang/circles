@@ -5,6 +5,7 @@ import MessagePreviewCard from "./message-preview-card";
 import UserBadge from "@/features/users/components/user-badge";
 import { Label } from "@radix-ui/react-label";
 import { cn } from "@/lib/utils";
+import { LocalFile } from "@/features/attachments/types";
 
 const MessageDialogForm = () => {
   const {
@@ -14,11 +15,18 @@ const MessageDialogForm = () => {
     pending,
     onChangeRecipients,
     searchUsers,
+    onAttachmentChange,
+    attachments,
   } = useAddNewMessageDialog();
 
   if (!draft) return null;
 
-  const { body, recipients, id } = draft;
+  const { body, recipients } = draft;
+
+  const handleFilesChange = (attachments: LocalFile[]) => {
+    onAttachmentChange(attachments);
+  };
+
   return (
     <div className="space-y-4 w-full">
       <div
@@ -66,12 +74,16 @@ const MessageDialogForm = () => {
         }
         value={body ?? ""}
         onChangeValue={onEditBody}
+        onFilesChange={handleFilesChange}
         attachFile
         emojiPicker
         clearButton
         placeholder="Enter your message"
         disabled={pending}
       />
+      {attachments.map((a) => (
+        <p key={a.file.name}>{a.file.name}</p>
+      ))}
     </div>
   );
 };
