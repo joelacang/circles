@@ -40,7 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider>
+          <ClerkProvider dynamic>
             <ConvexClientProvider>
               <Toaster />
               <DialogProvider />
